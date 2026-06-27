@@ -5,7 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Home Sale & Remodel Budget</title>
 <style>
-  /* ── Design tokens ── */
   :root {
     --navy:    #1A2744;
     --slate:   #2E4270;
@@ -35,69 +34,56 @@
     min-height: 100vh;
   }
 
+  /* ── Password screen ── */
+  #password-screen {
+    display: flex; align-items: center; justify-content: center;
+    min-height: 100vh; padding: 20px;
+    background: var(--navy);
+  }
+  .password-card {
+    background: var(--white); border-radius: 16px;
+    padding: 40px 36px; text-align: center;
+    width: 100%; max-width: 380px;
+    box-shadow: 0 8px 40px rgba(0,0,0,0.3);
+  }
+  .password-card .lock { font-size: 2.5rem; margin-bottom: 16px; }
+  .password-card h2 { font-size: 1.3rem; color: var(--navy); margin-bottom: 6px; }
+  .password-card p  { color: var(--muted); font-size: 0.88rem; margin-bottom: 24px; }
+  .password-card input {
+    width: 100%; padding: 12px 16px; border: 2px solid var(--border);
+    border-radius: 8px; font-size: 1rem; text-align: center;
+    letter-spacing: 0.05em; outline: none; font-family: inherit;
+    transition: border-color 0.2s; margin-bottom: 12px;
+  }
+  .password-card input:focus { border-color: var(--navy); }
+  .password-card .btn-enter {
+    width: 100%; padding: 13px; background: var(--navy); color: var(--white);
+    border: none; border-radius: 8px; font-size: 1rem; font-weight: 700;
+    cursor: pointer; transition: background 0.18s;
+  }
+  .password-card .btn-enter:hover { background: var(--slate); }
+  .password-error {
+    color: var(--red); font-size: 0.83rem; margin-top: 10px;
+    display: none;
+  }
+  .password-hint { font-size: 0.75rem; color: var(--muted); margin-top: 14px; }
+
   /* ── Header ── */
   header {
-    background: var(--navy);
-    color: var(--white);
+    background: var(--navy); color: var(--white);
     padding: 18px 20px 14px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 12px;
-    flex-wrap: wrap;
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 12px; flex-wrap: wrap;
   }
-  .header-title { display: flex; align-items: center; gap: 12px; }
   .header-title h1 { font-size: 1.25rem; font-weight: 700; letter-spacing: -0.01em; }
   .header-title .sub { font-size: 0.75rem; color: var(--gold-lt); margin-top: 2px; }
   .sync-badge {
     font-size: 0.7rem; padding: 4px 10px; border-radius: 20px;
     background: rgba(200,168,75,0.2); color: var(--gold-lt);
-    border: 1px solid rgba(200,168,75,0.35);
-    white-space: nowrap;
+    border: 1px solid rgba(200,168,75,0.35); white-space: nowrap;
   }
   .sync-badge.synced { background: rgba(45,122,95,0.3); color: #a8e6cf; border-color: rgba(45,122,95,0.4); }
   .sync-badge.error  { background: rgba(185,64,64,0.3); color: #f4a0a0; border-color: rgba(185,64,64,0.4); }
-
-  /* ── Setup screen ── */
-  #setup-screen {
-    max-width: 520px; margin: 60px auto; padding: 0 20px;
-  }
-  .setup-card {
-    background: var(--white); border-radius: 14px;
-    box-shadow: var(--shadow); padding: 36px 32px;
-    text-align: center;
-  }
-  .setup-card h2 { font-size: 1.4rem; color: var(--navy); margin-bottom: 8px; }
-  .setup-card p  { color: var(--muted); font-size: 0.9rem; margin-bottom: 28px; line-height: 1.5; }
-  .setup-steps { text-align: left; margin-bottom: 28px; }
-  .setup-steps .step {
-    display: flex; gap: 12px; align-items: flex-start;
-    padding: 10px 0; border-bottom: 1px solid var(--border);
-  }
-  .setup-steps .step:last-child { border-bottom: none; }
-  .step-num {
-    width: 26px; height: 26px; border-radius: 50%; background: var(--navy);
-    color: var(--white); font-size: 0.75rem; font-weight: 700;
-    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
-    margin-top: 1px;
-  }
-  .step-text { font-size: 0.87rem; line-height: 1.5; color: var(--text); }
-  .step-text strong { color: var(--navy); }
-  .setup-input-group { display: flex; flex-direction: column; gap: 10px; margin-bottom: 16px; }
-  .setup-input-group input {
-    padding: 11px 14px; border: 1.5px solid var(--border); border-radius: 8px;
-    font-size: 0.9rem; font-family: monospace; letter-spacing: 0.05em;
-    transition: border-color 0.2s;
-  }
-  .setup-input-group input:focus { outline: none; border-color: var(--navy); }
-  .btn-primary {
-    background: var(--navy); color: var(--white); border: none;
-    padding: 12px 28px; border-radius: 8px; font-size: 0.95rem; font-weight: 600;
-    cursor: pointer; transition: background 0.18s; width: 100%;
-  }
-  .btn-primary:hover { background: var(--slate); }
-  .setup-hint { font-size: 0.78rem; color: var(--muted); margin-top: 12px; }
-  .setup-error { color: var(--red); font-size: 0.82rem; margin-top: 8px; display: none; }
 
   /* ── Main app ── */
   #app-screen { display: none; padding: 20px 16px 60px; max-width: 960px; margin: 0 auto; }
@@ -112,19 +98,16 @@
   }
   .summary-card .label { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); margin-bottom: 6px; }
   .summary-card .amount { font-size: 1.5rem; font-weight: 700; color: var(--navy); }
-  .summary-card.surplus .amount { color: var(--green); }
-  .summary-card.overspend .amount { color: var(--red); }
   .summary-card .sub-label { font-size: 0.72rem; color: var(--muted); margin-top: 3px; }
 
-  /* Status banner */
   .status-banner {
     border-radius: var(--radius); padding: 14px 18px; margin-bottom: 24px;
     font-size: 0.9rem; font-weight: 600; text-align: center; display: none;
   }
-  .status-banner.surplus { background: var(--green-lt); color: var(--green); display: block; }
-  .status-banner.overspend { background: var(--red-lt); color: var(--red); display: block; }
+  .status-banner.surplus  { background: var(--green-lt); color: var(--green); display: block; }
+  .status-banner.overspend{ background: var(--red-lt);   color: var(--red);   display: block; }
 
-  /* ── Project sections ── */
+  /* ── Tabs ── */
   .project-tabs { display: flex; gap: 8px; margin-bottom: 20px; flex-wrap: wrap; }
   .tab-btn {
     padding: 9px 20px; border-radius: 24px; border: 2px solid transparent;
@@ -144,33 +127,31 @@
   .section-header {
     display: flex; align-items: center; justify-content: space-between;
     padding: 14px 18px; cursor: pointer; user-select: none;
-    border-left: 4px solid transparent;
-    transition: background 0.15s;
+    border-left: 4px solid transparent; transition: background 0.15s;
   }
   .section-header:hover { background: var(--cream); }
   .section-header.il { border-left-color: var(--il-accent); }
   .section-header.fl { border-left-color: var(--fl-accent); }
-  .section-header.income-type { border-left-color: var(--green); }
+  .section-header.income-type  { border-left-color: var(--green); }
   .section-header.expense-type { border-left-color: var(--gold); }
   .section-header-left { display: flex; align-items: center; gap: 10px; }
   .section-pill {
     font-size: 0.68rem; padding: 2px 8px; border-radius: 12px;
     font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em;
   }
-  .pill-il    { background: #dceaf8; color: var(--il-accent); }
-  .pill-fl    { background: #fde9d6; color: var(--fl-accent); }
+  .pill-il      { background: #dceaf8; color: var(--il-accent); }
+  .pill-fl      { background: #fde9d6; color: var(--fl-accent); }
   .pill-income  { background: var(--green-lt); color: var(--green); }
   .pill-expense { background: #fef9ec; color: #9a7020; }
   .section-title { font-size: 0.95rem; font-weight: 600; color: var(--navy); }
   .section-total { font-size: 1rem; font-weight: 700; }
-  .section-total.income-color { color: var(--green); }
+  .section-total.income-color  { color: var(--green); }
   .section-total.expense-color { color: var(--navy); }
   .section-chevron { font-size: 0.75rem; color: var(--muted); transition: transform 0.2s; }
   .section-chevron.open { transform: rotate(180deg); }
-
   .section-body { border-top: 1px solid var(--border); }
 
-  /* Line items */
+  /* ── Line items ── */
   .line-items { padding: 4px 0; }
   .line-item {
     display: flex; align-items: center; gap: 8px;
@@ -194,11 +175,10 @@
   .line-item-amount {
     flex: 0 0 120px; text-align: right; font-size: 0.88rem; font-weight: 600;
     border: none; background: transparent; outline: none;
-    font-family: inherit; cursor: text;
-    color: var(--text);
+    font-family: inherit; cursor: text; color: var(--text);
   }
   .line-item-amount:focus { background: #f0f0ec; border-radius: 4px; padding: 2px 6px; }
-  .line-item-amount.income-color { color: var(--green); }
+  .line-item-amount.income-color  { color: var(--green); }
   .line-item-amount.expense-color { color: var(--navy); }
   .delete-btn {
     flex: 0 0 24px; width: 24px; height: 24px; border-radius: 50%;
@@ -209,11 +189,10 @@
   .line-item:hover .delete-btn { opacity: 1; }
   .delete-btn:hover { background: var(--red-lt); color: var(--red); }
 
-  /* Add row */
+  /* ── Add row ── */
   .add-row {
     display: flex; gap: 8px; padding: 10px 18px;
-    background: var(--cream); border-top: 1px solid var(--border);
-    align-items: center;
+    background: var(--cream); border-top: 1px solid var(--border); align-items: center;
   }
   .add-row input {
     border: 1.5px solid var(--border); border-radius: 6px;
@@ -221,9 +200,9 @@
     font-family: inherit; outline: none; transition: border-color 0.2s;
   }
   .add-row input:focus { border-color: var(--navy); }
-  .add-row .inp-name  { flex: 1; }
-  .add-row .inp-notes { flex: 0 0 150px; }
-  .add-row .inp-amount{ flex: 0 0 110px; }
+  .add-row .inp-name   { flex: 1; }
+  .add-row .inp-notes  { flex: 0 0 150px; }
+  .add-row .inp-amount { flex: 0 0 110px; }
   .add-row .btn-add {
     flex: 0 0 auto; padding: 7px 14px; background: var(--navy); color: var(--white);
     border: none; border-radius: 6px; font-size: 0.82rem; font-weight: 600;
@@ -231,7 +210,6 @@
   }
   .add-row .btn-add:hover { background: var(--slate); }
 
-  /* Section subtotal */
   .section-subtotal {
     display: flex; justify-content: flex-end; align-items: center;
     padding: 10px 18px; background: var(--cream);
@@ -239,7 +217,6 @@
   }
   .section-subtotal strong { font-size: 0.95rem; color: var(--navy); }
 
-  /* Project surplus row */
   .project-surplus-row {
     display: flex; justify-content: space-between; align-items: center;
     padding: 12px 18px 14px; background: var(--white);
@@ -248,7 +225,7 @@
   }
   .project-surplus-row .label { font-size: 0.82rem; color: var(--muted); font-weight: 600; }
   .project-surplus-row .value { font-size: 1.1rem; font-weight: 700; }
-  .project-surplus-row .value.surplus  { color: var(--green); }
+  .project-surplus-row .value.surplus   { color: var(--green); }
   .project-surplus-row .value.overspend { color: var(--red); }
 
   /* ── Toolbar ── */
@@ -262,15 +239,9 @@
     cursor: pointer; transition: all 0.15s;
   }
   .btn-secondary:hover { border-color: var(--navy); color: var(--navy); }
-  .btn-danger {
-    padding: 8px 16px; border: 1.5px solid var(--border); border-radius: 8px;
-    background: var(--white); color: var(--muted); font-size: 0.82rem; font-weight: 600;
-    cursor: pointer; transition: all 0.15s;
-  }
-  .btn-danger:hover { border-color: var(--red); color: var(--red); }
   .last-saved { font-size: 0.75rem; color: var(--muted); }
 
-  /* ── Notes section ── */
+  /* ── Notes ── */
   .notes-card {
     background: var(--white); border-radius: var(--radius); box-shadow: var(--shadow);
     padding: 18px; margin-bottom: 20px;
@@ -295,7 +266,7 @@
     #app-screen { padding: 12px 10px 60px; }
   }
 
-  /* ── Loading overlay ── */
+  /* ── Loading ── */
   #loading-overlay {
     position: fixed; inset: 0; background: rgba(26,39,68,0.7);
     display: flex; align-items: center; justify-content: center; z-index: 100;
@@ -311,7 +282,6 @@
   @keyframes spin { to { transform: rotate(360deg); } }
   .loading-box p { color: var(--navy); font-weight: 600; font-size: 0.9rem; }
 
-  /* Toast */
   #toast {
     position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
     background: var(--navy); color: var(--white); padding: 10px 22px;
@@ -320,14 +290,13 @@
     white-space: nowrap;
   }
   #toast.show { opacity: 1; }
-
   .collapsed .section-body { display: none; }
 </style>
 </head>
 <body>
 
 <!-- Loading overlay -->
-<div id="loading-overlay">
+<div id="loading-overlay" style="display:none;">
   <div class="loading-box">
     <div class="spinner"></div>
     <p>Loading budget…</p>
@@ -337,8 +306,22 @@
 <!-- Toast -->
 <div id="toast"></div>
 
+<!-- Password screen -->
+<div id="password-screen">
+  <div class="password-card">
+    <div class="lock">🔒</div>
+    <h2>Willis Family Budget</h2>
+    <p>IL (324) Sale &amp; FL (4864) Remodel</p>
+    <input type="password" id="pwd-input" placeholder="Enter password"
+      onkeydown="if(event.key==='Enter') checkPassword()" autocomplete="current-password" />
+    <button class="btn-enter" onclick="checkPassword()">Enter</button>
+    <div class="password-error" id="pwd-error">Incorrect password — please try again.</div>
+    <div class="password-hint">Shared between both devices &amp; family members</div>
+  </div>
+</div>
+
 <!-- Header -->
-<header>
+<header style="display:none;" id="main-header">
   <div class="header-title">
     <div>
       <h1>🏠 Home Sale &amp; Remodel Budget</h1>
@@ -348,39 +331,6 @@
   <span id="sync-badge" class="sync-badge">● Connecting…</span>
 </header>
 
-<!-- Setup screen -->
-<div id="setup-screen">
-  <div class="setup-card">
-    <h2>Welcome! Let's get connected.</h2>
-    <p>This budget is shared between you and your wife. You only need to set this up <strong>once</strong> — then both of you use the same Bin ID &amp; password on any device.</p>
-    <div class="setup-steps">
-      <div class="step">
-        <div class="step-num">1</div>
-        <div class="step-text">Go to <strong><a href="https://jsonbin.io" target="_blank">jsonbin.io</a></strong> and create a free account.</div>
-      </div>
-      <div class="step">
-        <div class="step-num">2</div>
-        <div class="step-text">Click <strong>+ Create Bin</strong>. Paste <code>{}</code> as the content and save. Copy the <strong>Bin ID</strong> (looks like <em>64a3f…</em>).</div>
-      </div>
-      <div class="step">
-        <div class="step-num">3</div>
-        <div class="step-text">In your account settings, find your <strong>Access Key</strong> (Master Key or access key). Copy it.</div>
-      </div>
-      <div class="step">
-        <div class="step-num">4</div>
-        <div class="step-text">Enter both below. <strong>Share these same values</strong> with your wife so she connects to the same data.</div>
-      </div>
-    </div>
-    <div class="setup-input-group">
-      <input type="text" id="input-bin-id" placeholder="Bin ID  (e.g. 64a3f8c2abc123de456789)" autocomplete="off" spellcheck="false" />
-      <input type="password" id="input-api-key" placeholder="Access Key (X-Access-Key)" autocomplete="off" spellcheck="false" />
-    </div>
-    <button class="btn-primary" onclick="connectBin()">Connect &amp; Open Budget</button>
-    <div class="setup-error" id="setup-error"></div>
-    <p class="setup-hint">Your keys are stored locally on this device only. JSONBin free tier is plenty for this app.</p>
-  </div>
-</div>
-
 <!-- App screen -->
 <div id="app-screen">
   <div class="toolbar">
@@ -388,10 +338,8 @@
     <div class="toolbar-spacer"></div>
     <button class="btn-secondary" onclick="saveData()">💾 Save Now</button>
     <button class="btn-secondary" onclick="loadData()">🔄 Refresh</button>
-    <button class="btn-danger" onclick="disconnectBin()">⚙ Change Connection</button>
   </div>
 
-  <!-- Summary bar -->
   <div class="summary-bar">
     <div class="summary-card">
       <div class="label">Total Income</div>
@@ -412,17 +360,14 @@
 
   <div class="status-banner" id="status-banner"></div>
 
-  <!-- Project tabs -->
   <div class="project-tabs">
     <button class="tab-btn all active" onclick="setTab('all')">All Projects</button>
     <button class="tab-btn il" onclick="setTab('il')">🏡 IL (324) — Sale</button>
     <button class="tab-btn fl" onclick="setTab('fl')">🌴 FL (4864) — Remodel</button>
   </div>
 
-  <!-- Sections container -->
   <div id="sections-container"></div>
 
-  <!-- Notes -->
   <div class="notes-card">
     <h3>📝 Shared Notes</h3>
     <textarea id="shared-notes" placeholder="Add notes, reminders, or decisions here — visible to both of you…" oninput="scheduleSave()"></textarea>
@@ -431,19 +376,42 @@
 
 <script>
 // ═══════════════════════════════════════════════════════════
+// HARDCODED CREDENTIALS
+// ═══════════════════════════════════════════════════════════
+const BIN_ID  = '6a403239f5f4af5e293a4ee5';
+const API_KEY = '$2a$10$ZWfSme4o.C02NReQvgEwvuLzrMR13IVO6CBkp2fMj3naMSn5NBCKm';
+const APP_PASSWORD = 'Simplifylifeinfl';
+const SESSION_KEY  = 'willis_budget_auth';
+
+// ═══════════════════════════════════════════════════════════
+// PASSWORD
+// ═══════════════════════════════════════════════════════════
+function checkPassword() {
+  const val = document.getElementById('pwd-input').value;
+  const errEl = document.getElementById('pwd-error');
+  if (val === APP_PASSWORD) {
+    sessionStorage.setItem(SESSION_KEY, '1');
+    document.getElementById('password-screen').style.display = 'none';
+    document.getElementById('main-header').style.display = 'flex';
+    document.getElementById('app-screen').style.display = 'block';
+    showLoading(true);
+    loadData().finally(() => showLoading(false));
+  } else {
+    errEl.style.display = 'block';
+    document.getElementById('pwd-input').value = '';
+    document.getElementById('pwd-input').focus();
+  }
+}
+
+// ═══════════════════════════════════════════════════════════
 // STATE
 // ═══════════════════════════════════════════════════════════
-const STORAGE_KEY = 'budget_connection';
-let binId = '';
-let apiKey = '';
 let currentTab = 'all';
-let saveTimer = null;
-let lastSaved = null;
+let saveTimer  = null;
+let lastSaved  = null;
 
-// Default budget structure
 const DEFAULT_DATA = {
   sections: [
-    // ── IL SALE ──
     {
       id: 'il-income', project: 'il', type: 'income', label: 'IL Sale — Income',
       items: [
@@ -461,7 +429,6 @@ const DEFAULT_DATA = {
         { id: uid(), name: 'Payoff remaining mortgage', notes: '', amount: 0 },
       ]
     },
-    // ── FL REMODEL ──
     {
       id: 'fl-income', project: 'fl', type: 'income', label: 'FL Remodel — Budget / Funds',
       items: [
@@ -515,7 +482,6 @@ let appData = JSON.parse(JSON.stringify(DEFAULT_DATA));
 // ═══════════════════════════════════════════════════════════
 function uid() { return Math.random().toString(36).slice(2,10); }
 function fmt(n) {
-  if (!n && n !== 0) return '$0';
   const v = parseFloat(n) || 0;
   return (v < 0 ? '-$' : '$') + Math.abs(v).toLocaleString('en-US', {minimumFractionDigits:0, maximumFractionDigits:2});
 }
@@ -525,8 +491,7 @@ function parseAmt(s) {
 }
 function showToast(msg, ms=2200) {
   const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.classList.add('show');
+  t.textContent = msg; t.classList.add('show');
   setTimeout(() => t.classList.remove('show'), ms);
 }
 function showLoading(v) {
@@ -542,8 +507,8 @@ function setSyncBadge(state, msg) {
 // JSONBIN
 // ═══════════════════════════════════════════════════════════
 async function apiFetch(method, body=null) {
-  const url = `https://api.jsonbin.io/v3/b/${binId}`;
-  const headers = { 'X-Access-Key': apiKey, 'Content-Type': 'application/json' };
+  const url = `https://api.jsonbin.io/v3/b/${BIN_ID}`;
+  const headers = { 'X-Access-Key': API_KEY, 'Content-Type': 'application/json' };
   const opts = { method, headers };
   if (body) opts.body = JSON.stringify(body);
   const res = await fetch(url, opts);
@@ -562,7 +527,6 @@ async function loadData() {
     if (record && record.sections && record.sections.length > 0) {
       appData = record;
     } else {
-      // First time — push defaults
       await apiFetch('PUT', appData);
     }
     renderAll();
@@ -571,14 +535,13 @@ async function loadData() {
     updateLastSaved();
   } catch(e) {
     setSyncBadge('error', '● Sync error');
-    showToast('⚠ Could not load data: ' + e.message, 4000);
+    showToast('⚠ Could not load: ' + e.message, 4000);
   }
 }
 
 async function saveData() {
   setSyncBadge('', '● Saving…');
   try {
-    // Collect current field values before saving
     collectFromDOM();
     await apiFetch('PUT', appData);
     setSyncBadge('synced', '● Saved ✓');
@@ -598,36 +561,8 @@ function scheduleSave() {
 
 function updateLastSaved() {
   if (!lastSaved) return;
-  const el = document.getElementById('last-saved');
-  el.textContent = 'Last saved: ' + lastSaved.toLocaleTimeString();
+  document.getElementById('last-saved').textContent = 'Last saved: ' + lastSaved.toLocaleTimeString();
 }
-
-// ═══════════════════════════════════════════════════════════
-// CONNECTION
-// ═══════════════════════════════════════════════════════════
-function connectBin() {
-  const b = document.getElementById('input-bin-id').value.trim();
-  const k = document.getElementById('input-api-key').value.trim();
-  const errEl = document.getElementById('setup-error');
-  errEl.style.display = 'none';
-  if (!b || !k) { errEl.textContent = 'Please enter both the Bin ID and Access Key.'; errEl.style.display='block'; return; }
-  binId = b; apiKey = k;
-  localStorage.setItem(STORAGE_KEY, JSON.stringify({binId, apiKey}));
-  showSetup(false);
-  showApp(true);
-  showLoading(true);
-  loadData().finally(() => showLoading(false));
-}
-
-function disconnectBin() {
-  if (!confirm('This will disconnect this device. You can reconnect anytime with the same Bin ID and key.')) return;
-  localStorage.removeItem(STORAGE_KEY);
-  binId=''; apiKey='';
-  showSetup(true); showApp(false);
-}
-
-function showSetup(v) { document.getElementById('setup-screen').style.display = v ? 'block' : 'none'; }
-function showApp(v)   { document.getElementById('app-screen').style.display   = v ? 'block' : 'none'; }
 
 // ═══════════════════════════════════════════════════════════
 // RENDER
@@ -649,19 +584,14 @@ function renderSections() {
   const container = document.getElementById('sections-container');
   container.innerHTML = '';
   const sections = appData.sections.filter(s => currentTab === 'all' || s.project === currentTab);
-  
-  // Group by project for surplus display
   const projects = [...new Set(sections.map(s=>s.project))];
-  
   projects.forEach(proj => {
-    const projSections = sections.filter(s=>s.project===proj);
-    projSections.forEach(section => {
+    sections.filter(s=>s.project===proj).forEach(section => {
       container.appendChild(renderSection(section));
     });
-    // Project surplus row
     const wrapper = document.createElement('div');
     wrapper.className = 'section-card';
-    wrapper.style.cssText = 'margin-bottom:28px;';
+    wrapper.style.marginBottom = '28px';
     const row = document.createElement('div');
     row.className = 'project-surplus-row';
     const { income, expenses } = calcProject(proj);
@@ -681,7 +611,6 @@ function renderSection(section) {
   const card = document.createElement('div');
   card.className = 'section-card';
   card.dataset.sectionId = section.id;
-
   const projClass = section.project;
   const typeClass = section.type === 'income' ? 'income-type' : 'expense-type';
   const total = section.items.reduce((s,i) => s + parseAmt(i.amount), 0);
@@ -692,7 +621,6 @@ function renderSection(section) {
   const typePill = section.type === 'income'
     ? '<span class="section-pill pill-income">Income</span>'
     : '<span class="section-pill pill-expense">Expense</span>';
-
   card.innerHTML = `
     <div class="section-header ${projClass} ${typeClass}" onclick="toggleSection('${section.id}')">
       <div class="section-header-left">
@@ -708,12 +636,10 @@ function renderSection(section) {
       <div class="line-items" id="items-${section.id}">
         ${section.items.map(item => renderItem(item, section)).join('')}
       </div>
-      <div class="section-subtotal">
-        Section total: <strong>${fmt(total)}</strong>
-      </div>
+      <div class="section-subtotal">Section total: <strong>${fmt(total)}</strong></div>
       <div class="add-row">
-        <input class="inp-name" type="text" placeholder="Item description" />
-        <input class="inp-notes" type="text" placeholder="Notes (optional)" />
+        <input class="inp-name"   type="text" placeholder="Item description" />
+        <input class="inp-notes"  type="text" placeholder="Notes (optional)" />
         <input class="inp-amount" type="text" placeholder="$0" />
         <button class="btn-add" onclick="addItem('${section.id}', this)">+ Add</button>
       </div>
@@ -726,19 +652,13 @@ function renderItem(item, section) {
   const amtClass = section.type === 'income' ? 'income-color' : 'expense-color';
   return `
     <div class="line-item" data-item-id="${item.id}" data-section-id="${section.id}">
-      <input class="line-item-name" type="text" value="${escHtml(item.name)}"
-        placeholder="Description"
-        onchange="updateItem('${section.id}','${item.id}','name',this.value)"
-        oninput="scheduleSave()" />
-      <input class="line-item-notes" type="text" value="${escHtml(item.notes||'')}"
-        placeholder="Notes"
-        onchange="updateItem('${section.id}','${item.id}','notes',this.value)"
-        oninput="scheduleSave()" />
-      <input class="line-item-amount ${amtClass}" type="text" value="${item.amount ? fmt(item.amount) : ''}"
-        placeholder="$0"
+      <input class="line-item-name" type="text" value="${escHtml(item.name)}" placeholder="Description"
+        onchange="updateItem('${section.id}','${item.id}','name',this.value)" oninput="scheduleSave()" />
+      <input class="line-item-notes" type="text" value="${escHtml(item.notes||'')}" placeholder="Notes"
+        onchange="updateItem('${section.id}','${item.id}','notes',this.value)" oninput="scheduleSave()" />
+      <input class="line-item-amount ${amtClass}" type="text" value="${item.amount ? fmt(item.amount) : ''}" placeholder="$0"
         onchange="updateItem('${section.id}','${item.id}','amount',this.value)"
-        onfocus="this.select()"
-        oninput="scheduleSave()" />
+        onfocus="this.select()" oninput="scheduleSave()" />
       <button class="delete-btn" onclick="deleteItem('${section.id}','${item.id}')" title="Remove">✕</button>
     </div>
   `;
@@ -752,28 +672,24 @@ function renderSummary() {
   let totalIncome = 0, totalExpenses = 0;
   appData.sections.forEach(s => {
     const t = s.items.reduce((sum,i)=>sum+parseAmt(i.amount),0);
-    if (s.type==='income') totalIncome += t;
-    else totalExpenses += t;
+    if (s.type==='income') totalIncome += t; else totalExpenses += t;
   });
   const net = totalIncome - totalExpenses;
   const isOver = net < 0;
-
   document.getElementById('total-income').textContent = fmt(totalIncome);
   document.getElementById('total-expenses').textContent = fmt(totalExpenses);
   document.getElementById('net-amount').textContent = fmt(Math.abs(net));
   document.getElementById('net-label').textContent = isOver ? '⚠ Over Budget' : '✓ Available Balance';
   document.getElementById('net-sub').textContent = isOver ? 'Reduce expenses or add income' : 'Income minus all expenses';
-  const netCard = document.getElementById('net-card');
-  netCard.querySelector('.amount').style.color = isOver ? 'var(--red)' : 'var(--green)';
-
+  document.getElementById('net-card').querySelector('.amount').style.color = isOver ? 'var(--red)' : 'var(--green)';
   const banner = document.getElementById('status-banner');
   if (totalIncome === 0) { banner.className = 'status-banner'; }
   else if (isOver) {
     banner.className = 'status-banner overspend';
-    banner.textContent = `⚠ You are $${Math.abs(net).toLocaleString()} over your income — reduce expenses or add more funds.`;
+    banner.textContent = `⚠ You are ${fmt(Math.abs(net))} over your income — reduce expenses or add more funds.`;
   } else {
     banner.className = 'status-banner surplus';
-    banner.textContent = `✓ You have $${net.toLocaleString()} remaining to spend across all projects.`;
+    banner.textContent = `✓ You have ${fmt(net)} remaining to spend across all projects.`;
   }
 }
 
@@ -786,20 +702,13 @@ function calcProject(proj) {
   return {income, expenses};
 }
 
-// ═══════════════════════════════════════════════════════════
-// SECTION TOGGLE
-// ═══════════════════════════════════════════════════════════
 function toggleSection(id) {
   const card = document.querySelector(`[data-section-id="${id}"]`);
   if (!card) return;
   card.classList.toggle('collapsed');
-  const chev = card.querySelector('.section-chevron');
-  chev.classList.toggle('open');
+  card.querySelector('.section-chevron').classList.toggle('open');
 }
 
-// ═══════════════════════════════════════════════════════════
-// ITEM MUTATIONS
-// ═══════════════════════════════════════════════════════════
 function updateItem(sectionId, itemId, field, value) {
   const section = appData.sections.find(s=>s.id===sectionId);
   if (!section) return;
@@ -807,7 +716,6 @@ function updateItem(sectionId, itemId, field, value) {
   if (!item) return;
   if (field==='amount') item.amount = parseAmt(value);
   else item[field] = value;
-  // Update totals only (no full re-render to preserve focus)
   updateSectionTotal(sectionId);
   renderSummary();
 }
@@ -822,14 +730,11 @@ function updateSectionTotal(sectionId) {
   if (totalEl) totalEl.textContent = fmt(total);
   const subtotalEl = card.querySelector('.section-subtotal strong');
   if (subtotalEl) subtotalEl.textContent = fmt(total);
-  // Update project surplus rows
   renderProjectSurplus();
 }
 
 function renderProjectSurplus() {
   document.querySelectorAll('.project-surplus-row').forEach(row => {
-    // We need to know which project this row belongs to
-    // The label tells us
     const label = row.querySelector('.label').textContent;
     const proj = label.includes('IL') ? 'il' : 'fl';
     const { income, expenses } = calcProject(proj);
@@ -849,14 +754,9 @@ function addItem(sectionId, btn) {
   if (!name) { row.querySelector('.inp-name').focus(); return; }
   const section = appData.sections.find(s=>s.id===sectionId);
   if (!section) return;
-  const item = { id: uid(), name, notes, amount: parseAmt(amtRaw) };
-  section.items.push(item);
-  // Re-render section
+  section.items.push({ id: uid(), name, notes, amount: parseAmt(amtRaw) });
   const card = document.querySelector(`[data-section-id="${sectionId}"]`);
-  if (card) {
-    const newCard = renderSection(section);
-    card.replaceWith(newCard);
-  }
+  if (card) card.replaceWith(renderSection(section));
   renderSummary();
   scheduleSave();
 }
@@ -872,14 +772,11 @@ function deleteItem(sectionId, itemId) {
   scheduleSave();
 }
 
-// Collect all edited field values from DOM into appData before saving
 function collectFromDOM() {
   document.querySelectorAll('[data-item-id]').forEach(row => {
-    const sectionId = row.dataset.sectionId;
-    const itemId = row.dataset.itemId;
-    const section = appData.sections.find(s=>s.id===sectionId);
+    const section = appData.sections.find(s=>s.id===row.dataset.sectionId);
     if (!section) return;
-    const item = section.items.find(i=>i.id===itemId);
+    const item = section.items.find(i=>i.id===row.dataset.itemId);
     if (!item) return;
     const nameEl   = row.querySelector('.line-item-name');
     const notesEl  = row.querySelector('.line-item-notes');
@@ -892,23 +789,15 @@ function collectFromDOM() {
 }
 
 // ═══════════════════════════════════════════════════════════
-// INIT
+// INIT — check if already authenticated this session
 // ═══════════════════════════════════════════════════════════
 (function init() {
-  showLoading(false);
-  const saved = localStorage.getItem(STORAGE_KEY);
-  if (saved) {
-    try {
-      const c = JSON.parse(saved);
-      binId = c.binId; apiKey = c.apiKey;
-      showSetup(false); showApp(true);
-      showLoading(true);
-      loadData().finally(() => showLoading(false));
-    } catch(e) {
-      showSetup(true); showApp(false);
-    }
-  } else {
-    showSetup(true); showApp(false);
+  if (sessionStorage.getItem(SESSION_KEY) === '1') {
+    document.getElementById('password-screen').style.display = 'none';
+    document.getElementById('main-header').style.display = 'flex';
+    document.getElementById('app-screen').style.display = 'block';
+    showLoading(true);
+    loadData().finally(() => showLoading(false));
   }
 })();
 </script>
