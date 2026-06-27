@@ -6,234 +6,203 @@
 <title>Home Sale & Remodel Budget</title>
 <style>
   :root {
-    --navy:    #1A2744;
-    --slate:   #2E4270;
-    --gold:    #C8A84B;
-    --gold-lt: #F0DFA0;
-    --green:   #2D7A5F;
-    --green-lt:#E6F4EF;
-    --red:     #B94040;
-    --red-lt:  #FAEAEA;
-    --cream:   #F7F5F0;
-    --white:   #FFFFFF;
-    --border:  #D6D0C4;
-    --text:    #1A1A1A;
-    --muted:   #6B6560;
-    --il-accent: #4A7FC1;
-    --fl-accent: #E07B3A;
-    --radius:  10px;
-    --shadow:  0 2px 12px rgba(0,0,0,0.09);
+    --navy:#1A2744; --slate:#2E4270; --gold:#C8A84B; --gold-lt:#F0DFA0;
+    --green:#2D7A5F; --green-lt:#E6F4EF; --red:#B94040; --red-lt:#FAEAEA;
+    --cream:#F7F5F0; --white:#FFFFFF; --border:#D6D0C4; --text:#1A1A1A;
+    --muted:#6B6560; --il-accent:#4A7FC1; --fl-accent:#E07B3A;
+    --radius:10px; --shadow:0 2px 12px rgba(0,0,0,0.09);
   }
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; background: var(--cream); color: var(--text); min-height: 100vh; }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:var(--cream);color:var(--text);min-height:100vh;}
 
-  /* ── Password ── */
-  #password-screen { display: flex; align-items: center; justify-content: center; min-height: 100vh; padding: 20px; background: var(--navy); }
-  .password-card { background: var(--white); border-radius: 16px; padding: 40px 36px; text-align: center; width: 100%; max-width: 400px; box-shadow: 0 8px 40px rgba(0,0,0,0.3); }
-  .password-card .lock { font-size: 2.5rem; margin-bottom: 16px; }
-  .password-card h2 { font-size: 1.3rem; color: var(--navy); margin-bottom: 6px; }
-  .password-card p  { color: var(--muted); font-size: 0.88rem; margin-bottom: 24px; }
-  .user-select-row { display: flex; gap: 10px; margin-bottom: 16px; }
-  .user-btn {
-    flex: 1; padding: 12px; border: 2px solid var(--border); border-radius: 10px;
-    background: var(--white); cursor: pointer; font-size: 0.95rem; font-weight: 700;
-    color: var(--navy); transition: all 0.18s;
+  /* PASSWORD */
+  #password-screen{display:flex;align-items:center;justify-content:center;min-height:100vh;padding:20px;background:var(--navy);}
+  .password-card{background:var(--white);border-radius:16px;padding:40px 36px;text-align:center;width:100%;max-width:400px;box-shadow:0 8px 40px rgba(0,0,0,0.3);}
+  .password-card .lock{font-size:2.5rem;margin-bottom:16px;}
+  .password-card h2{font-size:1.3rem;color:var(--navy);margin-bottom:6px;}
+  .password-card p{color:var(--muted);font-size:0.88rem;margin-bottom:24px;}
+  .user-select-row{display:flex;gap:10px;margin-bottom:16px;}
+  .user-btn{flex:1;padding:12px;border:2px solid var(--border);border-radius:10px;background:var(--white);cursor:pointer;font-size:0.95rem;font-weight:700;color:var(--navy);transition:all 0.18s;}
+  .user-btn:hover{border-color:var(--navy);background:var(--cream);}
+  .user-btn.selected{border-color:var(--navy);background:var(--navy);color:var(--white);}
+  .password-card input{width:100%;padding:12px 16px;border:2px solid var(--border);border-radius:8px;font-size:1rem;text-align:center;letter-spacing:0.05em;outline:none;font-family:inherit;transition:border-color 0.2s;margin-bottom:12px;}
+  .password-card input:focus{border-color:var(--navy);}
+  .btn-enter{width:100%;padding:13px;background:var(--navy);color:var(--white);border:none;border-radius:8px;font-size:1rem;font-weight:700;cursor:pointer;transition:background 0.18s;}
+  .btn-enter:hover{background:var(--slate);}
+  .password-error{color:var(--red);font-size:0.83rem;margin-top:10px;display:none;}
+
+  /* HEADER */
+  header{background:var(--navy);color:var(--white);padding:16px 20px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;}
+  .header-title h1{font-size:1.2rem;font-weight:700;}
+  .header-title .sub{font-size:0.73rem;color:var(--gold-lt);margin-top:2px;}
+  .header-right{display:flex;align-items:center;gap:10px;}
+  .user-badge{font-size:0.78rem;padding:4px 12px;border-radius:20px;background:rgba(255,255,255,0.15);color:var(--white);font-weight:600;}
+  .sync-badge{font-size:0.7rem;padding:4px 10px;border-radius:20px;background:rgba(200,168,75,0.2);color:var(--gold-lt);border:1px solid rgba(200,168,75,0.35);white-space:nowrap;}
+  .sync-badge.synced{background:rgba(45,122,95,0.3);color:#a8e6cf;border-color:rgba(45,122,95,0.4);}
+  .sync-badge.error{background:rgba(185,64,64,0.3);color:#f4a0a0;border-color:rgba(185,64,64,0.4);}
+
+  /* APP */
+  #app-screen{display:none;padding:20px 16px 60px;max-width:1100px;margin:0 auto;}
+
+  /* SUMMARY BAR */
+  .summary-bar{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:24px;}
+  .summary-card{background:var(--white);border-radius:var(--radius);box-shadow:var(--shadow);padding:16px;text-align:center;}
+  .summary-card .label{font-size:0.7rem;text-transform:uppercase;letter-spacing:0.06em;color:var(--muted);margin-bottom:6px;}
+  .summary-card .amount{font-size:1.3rem;font-weight:700;color:var(--navy);}
+  .summary-card .sub-label{font-size:0.7rem;color:var(--muted);margin-top:3px;}
+  .summary-card.highlight{border:2px solid var(--navy);}
+
+  .status-banner{border-radius:var(--radius);padding:14px 18px;margin-bottom:24px;font-size:0.9rem;font-weight:600;text-align:center;display:none;}
+  .status-banner.surplus{background:var(--green-lt);color:var(--green);display:block;}
+  .status-banner.overspend{background:var(--red-lt);color:var(--red);display:block;}
+
+  /* TABS */
+  .project-tabs{display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap;}
+  .tab-btn{padding:9px 20px;border-radius:24px;border:2px solid transparent;font-size:0.85rem;font-weight:600;cursor:pointer;transition:all 0.18s;background:var(--white);color:var(--muted);}
+  .tab-btn.il.active{background:var(--il-accent);color:var(--white);border-color:var(--il-accent);}
+  .tab-btn.fl.active{background:var(--fl-accent);color:var(--white);border-color:var(--fl-accent);}
+  .tab-btn:not(.active):hover{border-color:var(--border);color:var(--text);}
+
+  /* SECTION CARDS */
+  .section-card{background:var(--white);border-radius:var(--radius);box-shadow:var(--shadow);margin-bottom:16px;overflow:hidden;}
+  .section-header{display:flex;align-items:center;justify-content:space-between;padding:13px 16px;cursor:pointer;user-select:none;border-left:4px solid transparent;transition:background 0.15s;}
+  .section-header:hover{background:var(--cream);}
+  .section-header.il{border-left-color:var(--il-accent);}
+  .section-header.fl{border-left-color:var(--fl-accent);}
+  .section-header.income-type{border-left-color:var(--green);}
+  .section-header.expense-type{border-left-color:var(--gold);}
+  .section-header-left{display:flex;align-items:center;gap:8px;flex-wrap:wrap;flex:1;}
+  .section-pill{font-size:0.66rem;padding:2px 7px;border-radius:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;}
+  .pill-il{background:#dceaf8;color:var(--il-accent);}
+  .pill-fl{background:#fde9d6;color:var(--fl-accent);}
+  .pill-income{background:var(--green-lt);color:var(--green);}
+  .pill-expense{background:#fef9ec;color:#9a7020;}
+  .section-title-input{font-size:0.92rem;font-weight:600;color:var(--navy);border:none;background:transparent;outline:none;font-family:inherit;cursor:text;min-width:80px;max-width:260px;}
+  .section-title-input:focus{background:#efefeb;border-radius:4px;padding:2px 6px;}
+  .section-totals-row{display:flex;align-items:center;gap:12px;flex-shrink:0;}
+  .section-total-group{text-align:right;}
+  .stg-label{font-size:0.62rem;text-transform:uppercase;letter-spacing:0.05em;color:var(--muted);}
+  .stg-val{font-size:0.9rem;font-weight:700;}
+  .stg-val.income-color{color:var(--green);}
+  .stg-val.expense-color{color:var(--navy);}
+  .stg-val.positive{color:var(--green);}
+  .stg-val.negative{color:var(--red);}
+  .section-actions{display:flex;align-items:center;gap:4px;margin-left:8px;}
+  .sec-del-btn{width:24px;height:24px;border-radius:50%;background:none;border:none;cursor:pointer;font-size:0.8rem;color:var(--muted);display:flex;align-items:center;justify-content:center;transition:all 0.15s;opacity:0.4;flex-shrink:0;}
+  .section-card:hover .sec-del-btn{opacity:1;}
+  .sec-del-btn:hover{background:var(--red-lt);color:var(--red);}
+  .section-chevron{font-size:0.75rem;color:var(--muted);transition:transform 0.2s;margin-left:4px;}
+  .section-chevron.open{transform:rotate(180deg);}
+  .section-body{border-top:1px solid var(--border);}
+
+  /* COLUMN HEADERS */
+  .col-header-row{
+    display:grid;grid-template-columns:1fr 100px 34px 100px 34px 90px 28px;
+    gap:4px;padding:6px 16px 5px;background:#f0ede8;border-bottom:1px solid var(--border);
+    font-size:0.67rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:var(--muted);
   }
-  .user-btn:hover { border-color: var(--navy); background: var(--cream); }
-  .user-btn.selected { border-color: var(--navy); background: var(--navy); color: var(--white); }
-  .password-card input {
-    width: 100%; padding: 12px 16px; border: 2px solid var(--border); border-radius: 8px;
-    font-size: 1rem; text-align: center; letter-spacing: 0.05em; outline: none;
-    font-family: inherit; transition: border-color 0.2s; margin-bottom: 12px;
+  .col-header-row div{display:flex;align-items:center;}
+  .col-header-row .ch-r{justify-content:flex-end;}
+
+  /* LINE ITEMS */
+  .line-items{padding:2px 0;}
+  .line-item{
+    display:grid;grid-template-columns:1fr 100px 34px 100px 34px 90px 28px;
+    gap:4px;align-items:center;padding:7px 16px;
+    border-bottom:1px solid var(--cream);transition:background 0.12s;
   }
-  .password-card input:focus { border-color: var(--navy); }
-  .btn-enter { width: 100%; padding: 13px; background: var(--navy); color: var(--white); border: none; border-radius: 8px; font-size: 1rem; font-weight: 700; cursor: pointer; transition: background 0.18s; }
-  .btn-enter:hover { background: var(--slate); }
-  .password-error { color: var(--red); font-size: 0.83rem; margin-top: 10px; display: none; }
+  .line-item:last-child{border-bottom:none;}
+  .line-item:hover{background:var(--cream);}
+  .li-name{font-size:0.85rem;border:none;background:transparent;outline:none;font-family:inherit;cursor:text;width:100%;color:var(--text);}
+  .li-name:focus{background:#efefeb;border-radius:4px;padding:2px 5px;}
+  .li-budget,.li-actual{text-align:right;font-size:0.85rem;font-weight:600;border:none;background:transparent;outline:none;font-family:inherit;cursor:text;width:100%;}
+  .li-budget:focus,.li-actual:focus{background:#efefeb;border-radius:4px;padding:2px 5px;}
+  .li-budget.income-color,.li-actual.income-color{color:var(--green);}
+  .li-budget.expense-color,.li-actual.expense-color{color:var(--navy);}
+  .li-diff{text-align:right;font-size:0.82rem;font-weight:700;padding-right:2px;}
+  .li-diff.positive{color:var(--green);}
+  .li-diff.negative{color:var(--red);}
+  .li-diff.neutral{color:var(--muted);}
 
-  /* ── Header ── */
-  header { background: var(--navy); color: var(--white); padding: 16px 20px; display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
-  .header-title h1 { font-size: 1.2rem; font-weight: 700; }
-  .header-title .sub { font-size: 0.73rem; color: var(--gold-lt); margin-top: 2px; }
-  .header-right { display: flex; align-items: center; gap: 10px; }
-  .user-badge { font-size: 0.78rem; padding: 4px 12px; border-radius: 20px; background: rgba(255,255,255,0.15); color: var(--white); font-weight: 600; }
-  .sync-badge { font-size: 0.7rem; padding: 4px 10px; border-radius: 20px; background: rgba(200,168,75,0.2); color: var(--gold-lt); border: 1px solid rgba(200,168,75,0.35); white-space: nowrap; }
-  .sync-badge.synced { background: rgba(45,122,95,0.3); color: #a8e6cf; border-color: rgba(45,122,95,0.4); }
-  .sync-badge.error  { background: rgba(185,64,64,0.3); color: #f4a0a0; border-color: rgba(185,64,64,0.4); }
+  /* HISTORY BUTTONS */
+  .hist-btn{width:28px;height:22px;border-radius:5px;border:1px solid var(--border);background:var(--white);cursor:pointer;font-size:0.7rem;color:var(--muted);display:flex;align-items:center;justify-content:center;transition:all 0.15s;}
+  .hist-btn:hover{border-color:var(--navy);color:var(--navy);background:var(--cream);}
+  .hist-btn.has-history{border-color:var(--gold);color:#9a7020;background:#fef9ec;}
+  .hist-btn.has-history:hover{border-color:var(--navy);color:var(--navy);}
 
-  /* ── App ── */
-  #app-screen { display: none; padding: 20px 16px 60px; max-width: 1100px; margin: 0 auto; }
+  /* HISTORY POPUP */
+  .hist-popup{position:fixed;z-index:500;background:var(--white);border-radius:10px;box-shadow:0 4px 24px rgba(0,0,0,0.18);border:1px solid var(--border);width:310px;max-height:340px;overflow-y:auto;}
+  .hist-popup-header{padding:10px 14px 8px;border-bottom:1px solid var(--border);font-size:0.78rem;font-weight:700;color:var(--navy);display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;background:var(--white);}
+  .hist-popup-close{cursor:pointer;color:var(--muted);font-size:1rem;line-height:1;padding:0 2px;}
+  .hist-popup-close:hover{color:var(--red);}
+  .hist-entry{padding:8px 14px;border-bottom:1px solid var(--cream);font-size:0.78rem;}
+  .hist-entry:last-child{border-bottom:none;}
+  .hist-entry .he-meta{color:var(--muted);font-size:0.72rem;margin-bottom:3px;}
+  .hist-entry .he-old{color:var(--red);text-decoration:line-through;margin-right:4px;}
+  .hist-entry .he-new{color:var(--green);}
+  .hist-entry .he-added{color:var(--green);font-style:italic;}
+  .hist-empty{padding:16px 14px;color:var(--muted);font-size:0.8rem;text-align:center;}
 
-  /* ── Summary bar ── */
-  .summary-bar { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 24px; }
-  .summary-card { background: var(--white); border-radius: var(--radius); box-shadow: var(--shadow); padding: 16px; text-align: center; }
-  .summary-card .label     { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); margin-bottom: 6px; }
-  .summary-card .amount    { font-size: 1.3rem; font-weight: 700; color: var(--navy); }
-  .summary-card .sub-label { font-size: 0.7rem; color: var(--muted); margin-top: 3px; }
-  .summary-card.highlight  { border: 2px solid var(--navy); }
+  .delete-btn{width:22px;height:22px;border-radius:50%;background:none;border:none;cursor:pointer;font-size:0.8rem;color:var(--muted);display:flex;align-items:center;justify-content:center;transition:all 0.15s;opacity:0.3;justify-self:center;}
+  .line-item:hover .delete-btn{opacity:1;}
+  .delete-btn:hover{background:var(--red-lt);color:var(--red);}
 
-  .status-banner { border-radius: var(--radius); padding: 14px 18px; margin-bottom: 24px; font-size: 0.9rem; font-weight: 600; text-align: center; display: none; }
-  .status-banner.surplus   { background: var(--green-lt); color: var(--green); display: block; }
-  .status-banner.overspend { background: var(--red-lt);   color: var(--red);   display: block; }
+  /* ADD ROW */
+  .add-row{display:grid;grid-template-columns:1fr 100px 100px auto;gap:6px;padding:8px 16px;background:var(--cream);border-top:1px solid var(--border);align-items:center;}
+  .add-row input{border:1.5px solid var(--border);border-radius:6px;padding:6px 9px;font-size:0.82rem;background:var(--white);font-family:inherit;outline:none;transition:border-color 0.2s;width:100%;}
+  .add-row input:focus{border-color:var(--navy);}
+  .btn-add{padding:6px 12px;background:var(--navy);color:var(--white);border:none;border-radius:6px;font-size:0.8rem;font-weight:600;cursor:pointer;white-space:nowrap;}
+  .btn-add:hover{background:var(--slate);}
 
-  /* ── Tabs ── */
-  .project-tabs { display: flex; gap: 8px; margin-bottom: 20px; flex-wrap: wrap; }
-  .tab-btn { padding: 9px 20px; border-radius: 24px; border: 2px solid transparent; font-size: 0.85rem; font-weight: 600; cursor: pointer; transition: all 0.18s; background: var(--white); color: var(--muted); }
-  .tab-btn.il.active  { background: var(--il-accent); color: var(--white); border-color: var(--il-accent); }
-  .tab-btn.fl.active  { background: var(--fl-accent); color: var(--white); border-color: var(--fl-accent); }
-  .tab-btn.all.active { background: var(--navy); color: var(--white); border-color: var(--navy); }
-  .tab-btn:not(.active):hover { border-color: var(--border); color: var(--text); }
-
-  /* ── Section cards ── */
-  .section-card { background: var(--white); border-radius: var(--radius); box-shadow: var(--shadow); margin-bottom: 16px; overflow: hidden; }
-  .section-header { display: flex; align-items: center; justify-content: space-between; padding: 13px 16px; cursor: pointer; user-select: none; border-left: 4px solid transparent; transition: background 0.15s; }
-  .section-header:hover { background: var(--cream); }
-  .section-header.il { border-left-color: var(--il-accent); }
-  .section-header.fl { border-left-color: var(--fl-accent); }
-  .section-header.income-type  { border-left-color: var(--green); }
-  .section-header.expense-type { border-left-color: var(--gold); }
-  .section-header-left { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
-  .section-pill { font-size: 0.66rem; padding: 2px 7px; border-radius: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; }
-  .pill-il      { background: #dceaf8; color: var(--il-accent); }
-  .pill-fl      { background: #fde9d6; color: var(--fl-accent); }
-  .pill-income  { background: var(--green-lt); color: var(--green); }
-  .pill-expense { background: #fef9ec; color: #9a7020; }
-  .section-title { font-size: 0.92rem; font-weight: 600; color: var(--navy); }
-  .section-totals-row { display: flex; align-items: center; gap: 16px; }
-  .section-total-group { text-align: right; }
-  .stg-label { font-size: 0.62rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted); }
-  .stg-val   { font-size: 0.92rem; font-weight: 700; }
-  .stg-val.income-color  { color: var(--green); }
-  .stg-val.expense-color { color: var(--navy); }
-  .stg-val.positive { color: var(--green); }
-  .stg-val.negative { color: var(--red); }
-  .section-chevron { font-size: 0.75rem; color: var(--muted); transition: transform 0.2s; margin-left: 6px; }
-  .section-chevron.open { transform: rotate(180deg); }
-  .section-body { border-top: 1px solid var(--border); }
-
-  /* ── Column headers ── */
-  .col-header-row {
-    display: grid; grid-template-columns: 1fr 100px 38px 100px 38px 90px 28px;
-    gap: 4px; padding: 6px 16px 5px; background: #f0ede8;
-    border-bottom: 1px solid var(--border);
-    font-size: 0.67rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted);
+  /* SUBTOTALS */
+  .section-subtotals{
+    display:grid;grid-template-columns:1fr 100px 34px 100px 34px 90px 28px;
+    gap:4px;padding:8px 16px;background:#f0ede8;border-top:1px solid var(--border);font-size:0.78rem;font-weight:700;
   }
-  .col-header-row div { display: flex; align-items: center; }
-  .col-header-row .ch-r { justify-content: flex-end; }
+  .st-label{color:var(--muted);font-size:0.7rem;text-transform:uppercase;letter-spacing:0.05em;display:flex;align-items:center;}
+  .st-val{text-align:right;}
+  .st-val.income-color{color:var(--green);}
+  .st-val.expense-color{color:var(--navy);}
+  .st-val.positive{color:var(--green);}
+  .st-val.negative{color:var(--red);}
 
-  /* ── Line items ── */
-  .line-items { padding: 2px 0; }
-  .line-item {
-    display: grid; grid-template-columns: 1fr 100px 38px 100px 38px 90px 28px;
-    gap: 4px; align-items: center; padding: 7px 16px;
-    border-bottom: 1px solid var(--cream); transition: background 0.12s;
-  }
-  .line-item:last-child { border-bottom: none; }
-  .line-item:hover { background: var(--cream); }
+  /* ADD SECTION */
+  .add-section-bar{background:var(--white);border-radius:var(--radius);box-shadow:var(--shadow);margin-bottom:16px;padding:12px 16px;display:flex;gap:8px;align-items:center;flex-wrap:wrap;}
+  .add-section-bar input{flex:1;min-width:140px;border:1.5px solid var(--border);border-radius:6px;padding:7px 10px;font-size:0.84rem;font-family:inherit;outline:none;transition:border-color 0.2s;}
+  .add-section-bar input:focus{border-color:var(--navy);}
+  .add-section-bar select{border:1.5px solid var(--border);border-radius:6px;padding:7px 10px;font-size:0.84rem;font-family:inherit;outline:none;background:var(--white);cursor:pointer;}
+  .add-section-bar .btn-add-sec{padding:7px 14px;background:var(--navy);color:var(--white);border:none;border-radius:6px;font-size:0.82rem;font-weight:600;cursor:pointer;white-space:nowrap;}
+  .add-section-bar .btn-add-sec:hover{background:var(--slate);}
+  .add-section-label{font-size:0.8rem;color:var(--muted);font-weight:600;white-space:nowrap;}
 
-  .li-name { font-size: 0.85rem; border: none; background: transparent; outline: none; font-family: inherit; cursor: text; width: 100%; color: var(--text); }
-  .li-name:focus { background: #efefeb; border-radius: 4px; padding: 2px 5px; }
-  .li-budget, .li-actual { text-align: right; font-size: 0.85rem; font-weight: 600; border: none; background: transparent; outline: none; font-family: inherit; cursor: text; width: 100%; }
-  .li-budget:focus, .li-actual:focus { background: #efefeb; border-radius: 4px; padding: 2px 5px; }
-  .li-budget.income-color  { color: var(--green); }
-  .li-budget.expense-color { color: var(--navy); }
-  .li-actual.income-color  { color: var(--green); }
-  .li-actual.expense-color { color: var(--navy); }
+  /* TOOLBAR */
+  .toolbar{display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap;align-items:center;}
+  .toolbar-spacer{flex:1;}
+  .btn-secondary{padding:8px 16px;border:1.5px solid var(--border);border-radius:8px;background:var(--white);color:var(--text);font-size:0.82rem;font-weight:600;cursor:pointer;transition:all 0.15s;}
+  .btn-secondary:hover{border-color:var(--navy);color:var(--navy);}
+  .last-saved{font-size:0.75rem;color:var(--muted);}
 
-  .li-diff { text-align: right; font-size: 0.82rem; font-weight: 700; padding-right: 2px; }
-  .li-diff.positive { color: var(--green); }
-  .li-diff.negative { color: var(--red); }
-  .li-diff.neutral  { color: var(--muted); }
+  /* NOTES */
+  .notes-card{background:var(--white);border-radius:var(--radius);box-shadow:var(--shadow);padding:18px;margin-bottom:20px;}
+  .notes-card h3{font-size:0.88rem;color:var(--navy);font-weight:700;margin-bottom:10px;}
+  .notes-card textarea{width:100%;min-height:80px;border:1.5px solid var(--border);border-radius:8px;padding:10px;font-size:0.85rem;font-family:inherit;resize:vertical;outline:none;transition:border-color 0.2s;color:var(--text);}
+  .notes-card textarea:focus{border-color:var(--navy);}
 
-  /* ── History buttons ── */
-  .hist-btn {
-    width: 28px; height: 22px; border-radius: 5px; border: 1px solid var(--border);
-    background: var(--white); cursor: pointer; font-size: 0.7rem; color: var(--muted);
-    display: flex; align-items: center; justify-content: center; transition: all 0.15s;
-    position: relative;
-  }
-  .hist-btn:hover { border-color: var(--navy); color: var(--navy); background: var(--cream); }
-  .hist-btn.has-history { border-color: var(--gold); color: #9a7020; background: #fef9ec; }
-  .hist-btn.has-history:hover { border-color: var(--navy); color: var(--navy); }
+  /* LOADING */
+  #loading-overlay{position:fixed;inset:0;background:rgba(26,39,68,0.7);display:flex;align-items:center;justify-content:center;z-index:100;}
+  .loading-box{background:var(--white);border-radius:14px;padding:32px 40px;text-align:center;}
+  .spinner{width:36px;height:36px;border:3px solid var(--border);border-top-color:var(--navy);border-radius:50%;animation:spin 0.8s linear infinite;margin:0 auto 14px;}
+  @keyframes spin{to{transform:rotate(360deg);}}
+  .loading-box p{color:var(--navy);font-weight:600;font-size:0.9rem;}
+  #toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--navy);color:var(--white);padding:10px 22px;border-radius:24px;font-size:0.85rem;font-weight:600;opacity:0;transition:opacity 0.3s;pointer-events:none;z-index:200;white-space:nowrap;}
+  #toast.show{opacity:1;}
+  .collapsed .section-body{display:none;}
 
-  /* ── History popup ── */
-  .hist-popup {
-    position: fixed; z-index: 500; background: var(--white); border-radius: 10px;
-    box-shadow: 0 4px 24px rgba(0,0,0,0.18); border: 1px solid var(--border);
-    width: 300px; max-height: 320px; overflow-y: auto;
-  }
-  .hist-popup-header {
-    padding: 10px 14px 8px; border-bottom: 1px solid var(--border);
-    font-size: 0.78rem; font-weight: 700; color: var(--navy);
-    display: flex; justify-content: space-between; align-items: center;
-    position: sticky; top: 0; background: var(--white);
-  }
-  .hist-popup-close { cursor: pointer; color: var(--muted); font-size: 1rem; line-height: 1; padding: 0 2px; }
-  .hist-popup-close:hover { color: var(--red); }
-  .hist-entry { padding: 8px 14px; border-bottom: 1px solid var(--cream); font-size: 0.78rem; }
-  .hist-entry:last-child { border-bottom: none; }
-  .hist-entry .he-meta { color: var(--muted); font-size: 0.72rem; margin-bottom: 3px; }
-  .hist-entry .he-change { color: var(--text); }
-  .hist-entry .he-change .he-old { color: var(--red); text-decoration: line-through; margin-right: 4px; }
-  .hist-entry .he-change .he-new { color: var(--green); }
-  .hist-empty { padding: 16px 14px; color: var(--muted); font-size: 0.8rem; text-align: center; }
-
-  .delete-btn { width: 22px; height: 22px; border-radius: 50%; background: none; border: none; cursor: pointer; font-size: 0.8rem; color: var(--muted); display: flex; align-items: center; justify-content: center; transition: all 0.15s; opacity: 0.3; justify-self: center; }
-  .line-item:hover .delete-btn { opacity: 1; }
-  .delete-btn:hover { background: var(--red-lt); color: var(--red); }
-
-  /* ── Add row ── */
-  .add-row { display: grid; grid-template-columns: 1fr 100px 100px auto; gap: 6px; padding: 8px 16px; background: var(--cream); border-top: 1px solid var(--border); align-items: center; }
-  .add-row input { border: 1.5px solid var(--border); border-radius: 6px; padding: 6px 9px; font-size: 0.82rem; background: var(--white); font-family: inherit; outline: none; transition: border-color 0.2s; width: 100%; }
-  .add-row input:focus { border-color: var(--navy); }
-  .btn-add { padding: 6px 12px; background: var(--navy); color: var(--white); border: none; border-radius: 6px; font-size: 0.8rem; font-weight: 600; cursor: pointer; white-space: nowrap; }
-  .btn-add:hover { background: var(--slate); }
-
-  /* ── Section subtotals ── */
-  .section-subtotals {
-    display: grid; grid-template-columns: 1fr 100px 38px 100px 38px 90px 28px;
-    gap: 4px; padding: 8px 16px; background: #f0ede8; border-top: 1px solid var(--border);
-    font-size: 0.78rem; font-weight: 700;
-  }
-  .st-label { color: var(--muted); font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.05em; display: flex; align-items: center; }
-  .st-val   { text-align: right; }
-  .st-val.income-color  { color: var(--green); }
-  .st-val.expense-color { color: var(--navy); }
-  .st-val.positive { color: var(--green); }
-  .st-val.negative { color: var(--red); }
-
-  /* ── Toolbar ── */
-  .toolbar { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; align-items: center; }
-  .toolbar-spacer { flex: 1; }
-  .btn-secondary { padding: 8px 16px; border: 1.5px solid var(--border); border-radius: 8px; background: var(--white); color: var(--text); font-size: 0.82rem; font-weight: 600; cursor: pointer; transition: all 0.15s; }
-  .btn-secondary:hover { border-color: var(--navy); color: var(--navy); }
-  .last-saved { font-size: 0.75rem; color: var(--muted); }
-
-  /* ── Notes ── */
-  .notes-card { background: var(--white); border-radius: var(--radius); box-shadow: var(--shadow); padding: 18px; margin-bottom: 20px; }
-  .notes-card h3 { font-size: 0.88rem; color: var(--navy); font-weight: 700; margin-bottom: 10px; }
-  .notes-card textarea { width: 100%; min-height: 80px; border: 1.5px solid var(--border); border-radius: 8px; padding: 10px; font-size: 0.85rem; font-family: inherit; resize: vertical; outline: none; transition: border-color 0.2s; color: var(--text); }
-  .notes-card textarea:focus { border-color: var(--navy); }
-
-  /* ── Loading ── */
-  #loading-overlay { position: fixed; inset: 0; background: rgba(26,39,68,0.7); display: flex; align-items: center; justify-content: center; z-index: 100; }
-  .loading-box { background: var(--white); border-radius: 14px; padding: 32px 40px; text-align: center; }
-  .spinner { width: 36px; height: 36px; border: 3px solid var(--border); border-top-color: var(--navy); border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto 14px; }
-  @keyframes spin { to { transform: rotate(360deg); } }
-  .loading-box p { color: var(--navy); font-weight: 600; font-size: 0.9rem; }
-
-  #toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: var(--navy); color: var(--white); padding: 10px 22px; border-radius: 24px; font-size: 0.85rem; font-weight: 600; opacity: 0; transition: opacity 0.3s; pointer-events: none; z-index: 200; white-space: nowrap; }
-  #toast.show { opacity: 1; }
-  .collapsed .section-body { display: none; }
-
-  @media (max-width: 700px) {
-    .summary-bar { grid-template-columns: 1fr 1fr; }
-    .summary-bar .summary-card:last-child { grid-column: span 2; }
-    .col-header-row, .line-item, .section-subtotals { grid-template-columns: 1fr 80px 28px 80px 28px 70px 24px; }
-    .add-row { grid-template-columns: 1fr 80px 80px auto; }
-  }
-  @media (max-width: 500px) {
-    .col-header-row, .line-item, .section-subtotals { grid-template-columns: 1fr 75px 28px 75px 28px 60px 22px; }
+  @media(max-width:700px){
+    .summary-bar{grid-template-columns:1fr 1fr;}
+    .summary-bar .summary-card:last-child{grid-column:span 2;}
+    .col-header-row,.line-item,.section-subtotals{grid-template-columns:1fr 80px 28px 80px 28px 70px 22px;}
+    .add-row{grid-template-columns:1fr 80px 80px auto;}
   }
 </style>
 </head>
@@ -242,7 +211,7 @@
 <div id="loading-overlay" style="display:none;"><div class="loading-box"><div class="spinner"></div><p>Loading budget…</p></div></div>
 <div id="toast"></div>
 
-<!-- Password -->
+<!-- PASSWORD -->
 <div id="password-screen">
   <div class="password-card">
     <div class="lock">🏠</div>
@@ -252,13 +221,13 @@
       <button class="user-btn" id="btn-user-KW" onclick="selectUser('KW')">KW</button>
       <button class="user-btn" id="btn-user-MW" onclick="selectUser('MW')">MW</button>
     </div>
-    <input type="password" id="pwd-input" placeholder="Password" onkeydown="if(event.key==='Enter') checkPassword()" autocomplete="current-password" />
+    <input type="password" id="pwd-input" placeholder="Password" onkeydown="if(event.key==='Enter')checkPassword()" autocomplete="current-password"/>
     <button class="btn-enter" onclick="checkPassword()">Sign In</button>
     <div class="password-error" id="pwd-error">Incorrect password — please try again.</div>
   </div>
 </div>
 
-<!-- Header -->
+<!-- HEADER -->
 <header style="display:none;" id="main-header">
   <div class="header-title">
     <h1>🏠 Home Sale &amp; Remodel Budget</h1>
@@ -270,7 +239,7 @@
   </div>
 </header>
 
-<!-- App -->
+<!-- APP -->
 <div id="app-screen">
   <div class="toolbar">
     <span class="last-saved" id="last-saved">Last saved: never</span>
@@ -301,12 +270,12 @@
   <div class="status-banner" id="status-banner"></div>
 
   <div class="project-tabs">
-    <button class="tab-btn all active" onclick="setTab('all')">All Projects</button>
-    <button class="tab-btn il" onclick="setTab('il')">🏡 IL (324) — Sale</button>
+    <button class="tab-btn il active" onclick="setTab('il')">🏡 IL (324) — Sale</button>
     <button class="tab-btn fl" onclick="setTab('fl')">🌴 FL (4864) — Remodel</button>
   </div>
 
   <div id="sections-container"></div>
+  <div id="add-section-area"></div>
 
   <div class="notes-card">
     <h3>📝 Shared Notes</h3>
@@ -315,338 +284,302 @@
 </div>
 
 <script>
-const BIN_ID       = '6a403239f5f4af5e293a4ee5';
-const API_KEY      = '$2a$10$ZWfSme4o.C02NReQvgEwvuLzrMR13IVO6CBkp2fMj3naMSn5NBCKm';
-const SESSION_KEY  = 'willis_budget_session';
+const BIN_ID      = '6a403239f5f4af5e293a4ee5';
+const API_KEY     = '$2a$10$ZWfSme4o.C02NReQvgEwvuLzrMR13IVO6CBkp2fMj3naMSn5NBCKm';
+const SESSION_KEY = 'willis_budget_session';
+const USERS = { KW:'Simplifylifeinfl', MW:'Simplifylifeinfl' };
 
-const USERS = {
-  KW: 'Simplifylifeinfl',
-  MW: 'Simplifylifeinfl'
-};
+let currentUser = null, currentTab = 'il', saveTimer = null, lastSaved = null, activePopup = null;
 
-let currentUser = null;
-let currentTab  = 'all';
-let saveTimer   = null;
-let lastSaved   = null;
-let activePopup = null;
+// ── UTILS ──
+function uid(){ return Math.random().toString(36).slice(2,10); }
+function fmt(n){
+  const v = parseFloat(n)||0;
+  return (v<0?'-$':'$')+Math.abs(v).toLocaleString('en-US',{minimumFractionDigits:0,maximumFractionDigits:2});
+}
+function parseAmt(s){
+  if(s===null||s===undefined||s==='') return 0;
+  return parseFloat(String(s).replace(/[$,]/g,''))||0;
+}
+function fmtDT(ts){
+  if(!ts) return '';
+  const d=new Date(ts);
+  return d.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})+' '+
+         d.toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'});
+}
+function showToast(msg,ms=2200){ const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),ms); }
+function showLoading(v){ document.getElementById('loading-overlay').style.display=v?'flex':'none'; }
+function setSyncBadge(state,msg){ const b=document.getElementById('sync-badge'); b.className='sync-badge '+state; b.textContent=msg; }
+function escHtml(s){ return String(s||'').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 
-// ── Utils ──
-function uid() { return Math.random().toString(36).slice(2,10); }
-function fmt(n) {
-  const v = parseFloat(n) || 0;
-  return (v < 0 ? '-$' : '$') + Math.abs(v).toLocaleString('en-US', {minimumFractionDigits:0, maximumFractionDigits:2});
-}
-function parseAmt(s) {
-  if (s === null || s === undefined || s === '') return 0;
-  return parseFloat(String(s).replace(/[$,]/g,'')) || 0;
-}
-function fmtDateTime(ts) {
-  if (!ts) return '';
-  const d = new Date(ts);
-  return d.toLocaleDateString('en-US', {month:'short', day:'numeric', year:'numeric'}) + ' ' +
-         d.toLocaleTimeString('en-US', {hour:'numeric', minute:'2-digit'});
-}
-function showToast(msg, ms=2200) {
-  const t = document.getElementById('toast');
-  t.textContent = msg; t.classList.add('show');
-  setTimeout(() => t.classList.remove('show'), ms);
-}
-function showLoading(v) { document.getElementById('loading-overlay').style.display = v ? 'flex' : 'none'; }
-function setSyncBadge(state, msg) {
-  const b = document.getElementById('sync-badge');
-  b.className = 'sync-badge ' + state; b.textContent = msg;
-}
-
-// ── Auth ──
-let selectedUser = null;
-function selectUser(u) {
-  selectedUser = u;
-  document.querySelectorAll('.user-btn').forEach(b => b.classList.remove('selected'));
-  document.getElementById('btn-user-' + u).classList.add('selected');
+// ── AUTH ──
+let selectedUser=null;
+function selectUser(u){
+  selectedUser=u;
+  document.querySelectorAll('.user-btn').forEach(b=>b.classList.remove('selected'));
+  document.getElementById('btn-user-'+u).classList.add('selected');
   document.getElementById('pwd-input').focus();
 }
-function checkPassword() {
-  if (!selectedUser) { showPwdError('Please select KW or MW first.'); return; }
-  const pwd = document.getElementById('pwd-input').value;
-  if (USERS[selectedUser] && pwd === USERS[selectedUser]) {
-    currentUser = selectedUser;
-    sessionStorage.setItem(SESSION_KEY, JSON.stringify({user: currentUser}));
-    document.getElementById('password-screen').style.display = 'none';
-    document.getElementById('main-header').style.display = 'flex';
-    document.getElementById('app-screen').style.display = 'block';
-    document.getElementById('user-badge').textContent = '👤 ' + currentUser;
+function checkPassword(){
+  if(!selectedUser){ showPwdError('Please select KW or MW first.'); return; }
+  const pwd=document.getElementById('pwd-input').value;
+  if(USERS[selectedUser]&&pwd===USERS[selectedUser]){
+    currentUser=selectedUser;
+    sessionStorage.setItem(SESSION_KEY,JSON.stringify({user:currentUser}));
+    document.getElementById('password-screen').style.display='none';
+    document.getElementById('main-header').style.display='flex';
+    document.getElementById('app-screen').style.display='block';
+    document.getElementById('user-badge').textContent='👤 '+currentUser;
     showLoading(true);
-    loadData().finally(() => showLoading(false));
+    loadData().finally(()=>showLoading(false));
   } else {
     showPwdError('Incorrect password — please try again.');
-    document.getElementById('pwd-input').value = '';
+    document.getElementById('pwd-input').value='';
     document.getElementById('pwd-input').focus();
   }
 }
-function showPwdError(msg) {
-  const e = document.getElementById('pwd-error');
-  e.textContent = msg; e.style.display = 'block';
-}
-function signOut() {
-  sessionStorage.removeItem(SESSION_KEY);
-  currentUser = null; selectedUser = null;
-  document.getElementById('password-screen').style.display = 'flex';
-  document.getElementById('main-header').style.display = 'none';
-  document.getElementById('app-screen').style.display = 'none';
-  document.getElementById('pwd-input').value = '';
-  document.getElementById('pwd-error').style.display = 'none';
-  document.querySelectorAll('.user-btn').forEach(b => b.classList.remove('selected'));
+function showPwdError(msg){ const e=document.getElementById('pwd-error'); e.textContent=msg; e.style.display='block'; }
+function signOut(){
+  sessionStorage.removeItem(SESSION_KEY); currentUser=null; selectedUser=null;
+  document.getElementById('password-screen').style.display='flex';
+  document.getElementById('main-header').style.display='none';
+  document.getElementById('app-screen').style.display='none';
+  document.getElementById('pwd-input').value='';
+  document.getElementById('pwd-error').style.display='none';
+  document.querySelectorAll('.user-btn').forEach(b=>b.classList.remove('selected'));
 }
 
-// ── Default data ──
-function makeItem(name) {
-  return { id: uid(), name, budget: 0, actual: 0, budgetHistory: [], actualHistory: [] };
-}
+// ── DATA ──
+function makeItem(name){ return {id:uid(),name,budget:0,actual:0,budgetHistory:[],actualHistory:[]}; }
 const DEFAULT_DATA = {
-  sections: [
-    { id:'il-income',   project:'il', type:'income',  label:'IL Sale — Income',        items:[ makeItem('Sale price (estimated)') ] },
-    { id:'il-expenses', project:'il', type:'expense', label:'IL Sale — Selling Costs',  items:[ makeItem('Real estate agent commission'), makeItem('Closing costs (seller)'), makeItem('Staging / prep costs'), makeItem('Repairs before listing'), makeItem('Moving / storage'), makeItem('Payoff remaining mortgage') ] },
-    { id:'fl-income',   project:'fl', type:'income',  label:'FL Remodel — Budget / Funds', items:[ makeItem('Net proceeds from IL sale'), makeItem('Cash reserves / savings'), makeItem('HELOC / loan') ] },
-    { id:'fl-kitchen',  project:'fl', type:'expense', label:'FL Remodel — Kitchen',     items:[ makeItem('Cabinets'), makeItem('Countertops'), makeItem('Appliances'), makeItem('Labor') ] },
-    { id:'fl-bathrooms',project:'fl', type:'expense', label:'FL Remodel — Bathrooms',   items:[ makeItem('Fixtures & vanities'), makeItem('Tile & flooring'), makeItem('Labor') ] },
-    { id:'fl-floors',   project:'fl', type:'expense', label:'FL Remodel — Floors & Paint', items:[ makeItem('Flooring material'), makeItem('Floor installation'), makeItem('Interior painting') ] },
-    { id:'fl-general',  project:'fl', type:'expense', label:'FL Remodel — Other Costs', items:[ makeItem('Permits & inspections'), makeItem('HVAC / plumbing'), makeItem('Landscaping'), makeItem('Contingency (10%)') ] },
+  sections:[
+    {id:'il-income',  project:'il',type:'income', label:'IL Sale — Income',        items:[makeItem('Sale price (estimated)')]},
+    {id:'il-expenses',project:'il',type:'expense',label:'IL Sale — Selling Costs', items:[makeItem('Real estate agent commission'),makeItem('Closing costs (seller)'),makeItem('Staging / prep costs'),makeItem('Repairs before listing'),makeItem('Moving / storage'),makeItem('Payoff remaining mortgage')]},
+    {id:'fl-income',  project:'fl',type:'income', label:'FL Remodel — Budget / Funds',items:[makeItem('Net proceeds from IL sale'),makeItem('Cash reserves / savings'),makeItem('HELOC / loan')]},
+    {id:'fl-kitchen', project:'fl',type:'expense',label:'FL Remodel — Kitchen',    items:[makeItem('Cabinets'),makeItem('Countertops'),makeItem('Appliances'),makeItem('Labor')]},
+    {id:'fl-bathrooms',project:'fl',type:'expense',label:'FL Remodel — Bathrooms', items:[makeItem('Fixtures & vanities'),makeItem('Tile & flooring'),makeItem('Labor')]},
+    {id:'fl-floors',  project:'fl',type:'expense',label:'FL Remodel — Floors & Paint',items:[makeItem('Flooring material'),makeItem('Floor installation'),makeItem('Interior painting')]},
+    {id:'fl-general', project:'fl',type:'expense',label:'FL Remodel — Other Costs',items:[makeItem('Permits & inspections'),makeItem('HVAC / plumbing'),makeItem('Landscaping'),makeItem('Contingency (10%)')]}
   ],
-  notes: ''
+  notes:''
 };
-
 let appData = JSON.parse(JSON.stringify(DEFAULT_DATA));
 
-function migrateItem(item) {
-  if (!item.budgetHistory) item.budgetHistory = [];
-  if (!item.actualHistory) item.actualHistory = [];
-  if (item.amount !== undefined && item.budget === undefined) {
-    item.budget = item.amount; delete item.amount;
-  }
-  if (item.budget === undefined) item.budget = 0;
-  if (item.actual === undefined) item.actual = 0;
+function migrateItem(item){
+  if(!item.budgetHistory) item.budgetHistory=[];
+  if(!item.actualHistory) item.actualHistory=[];
+  if(item.amount!==undefined&&item.budget===undefined){ item.budget=item.amount; delete item.amount; }
+  if(item.budget===undefined) item.budget=0;
+  if(item.actual===undefined) item.actual=0;
   return item;
 }
-function migrateData(data) {
-  if (!data || !data.sections) return data;
-  data.sections.forEach(s => { s.items = s.items.map(migrateItem); });
+function migrateData(data){
+  if(!data||!data.sections) return data;
+  data.sections.forEach(s=>{ s.items=s.items.map(migrateItem); });
   return data;
 }
 
-// ── JSONBin ──
-async function apiFetch(method, body=null) {
-  const url = `https://api.jsonbin.io/v3/b/${BIN_ID}`;
-  const headers = { 'X-Master-Key': API_KEY, 'Content-Type': 'application/json' };
-  const opts = { method, headers };
-  if (body) opts.body = JSON.stringify(body);
-  const res = await fetch(url, opts);
-  if (!res.ok) { const e = await res.json().catch(()=>({message:'Unknown error'})); throw new Error(e.message||`HTTP ${res.status}`); }
+// ── JSONBIN ──
+async function apiFetch(method,body=null){
+  const url=`https://api.jsonbin.io/v3/b/${BIN_ID}`;
+  const headers={'X-Master-Key':API_KEY,'Content-Type':'application/json'};
+  const opts={method,headers};
+  if(body) opts.body=JSON.stringify(body);
+  const res=await fetch(url,opts);
+  if(!res.ok){ const e=await res.json().catch(()=>({message:'Unknown error'})); throw new Error(e.message||`HTTP ${res.status}`); }
   return res.json();
 }
-async function loadData() {
-  setSyncBadge('', '● Syncing…');
-  try {
-    const resp = await apiFetch('GET');
-    const record = resp.record;
-    if (record && record.sections && record.sections.length > 0) {
-      appData = migrateData(record);
-    } else {
-      await apiFetch('PUT', appData);
-    }
+async function loadData(){
+  setSyncBadge('','● Syncing…');
+  try{
+    const resp=await apiFetch('GET');
+    const record=resp.record;
+    if(record&&record.sections&&record.sections.length>0){ appData=migrateData(record); }
+    else{ await apiFetch('PUT',appData); }
     renderAll();
-    setSyncBadge('synced', '● Synced');
-    lastSaved = new Date(); updateLastSaved();
-  } catch(e) {
-    setSyncBadge('error', '● Sync error');
-    showToast('⚠ Could not load: ' + e.message, 4000);
-  }
+    setSyncBadge('synced','● Synced');
+    lastSaved=new Date(); updateLastSaved();
+  }catch(e){ setSyncBadge('error','● Sync error'); showToast('⚠ Could not load: '+e.message,4000); }
 }
-async function saveData() {
-  setSyncBadge('', '● Saving…');
-  try {
+async function saveData(){
+  setSyncBadge('','● Saving…');
+  try{
     collectFromDOM();
-    await apiFetch('PUT', appData);
-    setSyncBadge('synced', '● Saved ✓');
-    lastSaved = new Date(); updateLastSaved();
+    await apiFetch('PUT',appData);
+    setSyncBadge('synced','● Saved ✓');
+    lastSaved=new Date(); updateLastSaved();
     showToast('✓ Saved & synced');
-  } catch(e) {
-    setSyncBadge('error', '● Save failed');
-    showToast('⚠ Save failed: ' + e.message, 4000);
-  }
+  }catch(e){ setSyncBadge('error','● Save failed'); showToast('⚠ Save failed: '+e.message,4000); }
 }
-function scheduleSave() { clearTimeout(saveTimer); saveTimer = setTimeout(saveData, 3000); }
-function updateLastSaved() {
-  if (!lastSaved) return;
-  document.getElementById('last-saved').textContent = 'Last saved: ' + lastSaved.toLocaleTimeString();
+function scheduleSave(){ clearTimeout(saveTimer); saveTimer=setTimeout(saveData,3000); }
+function updateLastSaved(){ if(!lastSaved) return; document.getElementById('last-saved').textContent='Last saved: '+lastSaved.toLocaleTimeString(); }
+
+// ── DIFF ──
+function calcDiff(type,budget,actual){
+  if(!actual&&actual!==0) return null;
+  if(actual===0) return null;
+  const raw=actual-budget;
+  return type==='income'?raw:-raw;
+}
+function diffHTML(type,budget,actual){
+  const d=calcDiff(type,budget,actual);
+  if(d===null||d===0) return '<div class="li-diff neutral">—</div>';
+  const cls=d>0?'positive':'negative';
+  const sign=d>0?'+':'-';
+  return `<div class="li-diff ${cls}">${sign}${fmt(Math.abs(d)).replace(/^-?\$/,'$')}</div>`;
+}
+function diffText(type,budget,actual){
+  const d=calcDiff(type,budget,actual);
+  if(d===null||d===0) return '—';
+  const sign=d>0?'+':'-';
+  return `${sign}${fmt(Math.abs(d)).replace(/^-?\$/,'$')}`;
+}
+function diffCls(type,budget,actual){
+  const d=calcDiff(type,budget,actual);
+  if(d===null||d===0) return 'neutral';
+  return d>0?'positive':'negative';
 }
 
-// ── Diff ──
-// Positive = favorable (income: actual > budget, expense: actual < budget)
-function calcDiff(type, budget, actual) {
-  if (!actual) return null;
-  const raw = actual - budget;
-  return type === 'income' ? raw : -raw;
-}
-function diffHTML(type, budget, actual) {
-  const d = calcDiff(type, budget, actual);
-  if (d === null || d === 0) return '<span class="li-diff neutral">—</span>';
-  const cls = d > 0 ? 'positive' : 'negative';
-  const sign = d > 0 ? '+' : '-';
-  return `<div class="li-diff ${cls}">${sign}${fmt(Math.abs(d)).replace(/^\-?\$/, '$')}</div>`;
-}
-function diffText(type, budget, actual) {
-  const d = calcDiff(type, budget, actual);
-  if (d === null || d === 0) return '—';
-  const sign = d > 0 ? '+' : '-';
-  return `${sign}${fmt(Math.abs(d)).replace(/^\-?\$/, '$')}`;
-}
-function diffCls(type, budget, actual) {
-  const d = calcDiff(type, budget, actual);
-  if (d === null || d === 0) return 'neutral';
-  return d > 0 ? 'positive' : 'negative';
-}
-
-// ── History popup ──
-function showHistoryPopup(btn, itemId, sectionId, field) {
+// ── HISTORY POPUP ──
+function showHistoryPopup(btn,itemId,sectionId,field){
   closePopup();
-  const section = appData.sections.find(s=>s.id===sectionId);
-  const item = section && section.items.find(i=>i.id===itemId);
-  if (!item) return;
-
-  const history = field === 'budget' ? (item.budgetHistory||[]) : (item.actualHistory||[]);
-  const fieldLabel = field === 'budget' ? 'Budget' : 'Actual';
-
-  const popup = document.createElement('div');
-  popup.className = 'hist-popup';
-  popup.id = 'hist-popup';
-
-  let inner = `<div class="hist-popup-header"><span>${fieldLabel} History: ${item.name}</span><span class="hist-popup-close" onclick="closePopup()">✕</span></div>`;
-  if (history.length === 0) {
-    inner += `<div class="hist-empty">No changes recorded yet.</div>`;
+  const section=appData.sections.find(s=>s.id===sectionId);
+  const item=section&&section.items.find(i=>i.id===itemId);
+  if(!item) return;
+  const history=field==='budget'?(item.budgetHistory||[]):(item.actualHistory||[]);
+  const fieldLabel=field==='budget'?'Budget':'Actual';
+  const popup=document.createElement('div');
+  popup.className='hist-popup'; popup.id='hist-popup';
+  let inner=`<div class="hist-popup-header"><span>${fieldLabel} History: ${escHtml(item.name)}</span><span class="hist-popup-close" onclick="closePopup()">✕</span></div>`;
+  if(history.length===0){
+    inner+=`<div class="hist-empty">No changes recorded yet.</div>`;
   } else {
-    const sorted = [...history].reverse();
-    sorted.forEach(h => {
-      inner += `
-        <div class="hist-entry">
-          <div class="he-meta">${fmtDateTime(h.ts)} &nbsp;·&nbsp; ${h.user}</div>
-          <div class="he-change">
-            <span class="he-old">${fmt(h.from)}</span>
-            <span>→</span>
-            <span class="he-new">${fmt(h.to)}</span>
-          </div>
-        </div>`;
+    [...history].reverse().forEach((h,idx)=>{
+      const isFirst = idx === history.length-1;
+      if(isFirst && h.from===0){
+        inner+=`<div class="hist-entry"><div class="he-meta">${fmtDT(h.ts)} · ${h.user}</div><div><span class="he-added">Added at ${fmt(h.to)}</span></div></div>`;
+      } else {
+        inner+=`<div class="hist-entry"><div class="he-meta">${fmtDT(h.ts)} · ${h.user}</div><div><span class="he-old">${fmt(h.from)}</span>→<span class="he-new"> ${fmt(h.to)}</span></div></div>`;
+      }
     });
   }
-  popup.innerHTML = inner;
-
-  // Position popup near button
+  popup.innerHTML=inner;
   document.body.appendChild(popup);
-  const rect = btn.getBoundingClientRect();
-  const pw = 300, ph = Math.min(320, popup.scrollHeight);
-  let left = rect.left + window.scrollX - pw + rect.width;
-  let top  = rect.bottom + window.scrollY + 4;
-  if (left < 8) left = 8;
-  if (left + pw > window.innerWidth - 8) left = window.innerWidth - pw - 8;
-  if (top + ph > window.scrollY + window.innerHeight - 8) top = rect.top + window.scrollY - ph - 4;
-  popup.style.left = left + 'px';
-  popup.style.top  = top  + 'px';
-  activePopup = popup;
+  const rect=btn.getBoundingClientRect();
+  const pw=310, ph=Math.min(340,320);
+  let left=rect.left+window.scrollX-pw+rect.width;
+  let top=rect.bottom+window.scrollY+4;
+  if(left<8) left=8;
+  if(left+pw>window.innerWidth-8) left=window.innerWidth-pw-8;
+  if(top+ph>window.scrollY+window.innerHeight-8) top=rect.top+window.scrollY-ph-4;
+  popup.style.left=left+'px'; popup.style.top=top+'px';
+  activePopup=popup;
+  setTimeout(()=>{ document.addEventListener('click',outsidePopupClick,true); },10);
+}
+function outsidePopupClick(e){ if(activePopup&&!activePopup.contains(e.target)) closePopup(); }
+function closePopup(){ if(activePopup){ activePopup.remove(); activePopup=null; } document.removeEventListener('click',outsidePopupClick,true); }
 
-  // Close on outside click
-  setTimeout(() => {
-    document.addEventListener('click', outsidePopupClick, true);
-  }, 10);
-}
-function outsidePopupClick(e) {
-  if (activePopup && !activePopup.contains(e.target)) {
-    closePopup();
-  }
-}
-function closePopup() {
-  if (activePopup) { activePopup.remove(); activePopup = null; }
-  document.removeEventListener('click', outsidePopupClick, true);
-}
-
-// ── Render ──
-function setTab(tab) {
-  currentTab = tab;
-  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+// ── RENDER ──
+function setTab(tab){
+  currentTab=tab;
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
   document.querySelector(`.tab-btn.${tab}`).classList.add('active');
   renderAll();
 }
-function renderAll() { renderSections(); renderSummary(); document.getElementById('shared-notes').value = appData.notes || ''; }
+function renderAll(){ renderSections(); renderSummary(); document.getElementById('shared-notes').value=appData.notes||''; }
 
-function renderSections() {
-  const container = document.getElementById('sections-container');
-  container.innerHTML = '';
-  const sections = appData.sections.filter(s => currentTab === 'all' || s.project === currentTab);
-  sections.forEach(section => container.appendChild(renderSection(section)));
+function renderSections(){
+  const container=document.getElementById('sections-container');
+  const addArea=document.getElementById('add-section-area');
+  container.innerHTML='';
+  const sections=appData.sections.filter(s=>s.project===currentTab);
+  sections.forEach(section=>container.appendChild(renderSection(section)));
+  // Add section bar
+  addArea.innerHTML=`
+    <div class="add-section-bar">
+      <span class="add-section-label">+ New Section:</span>
+      <input type="text" id="new-sec-name" placeholder="Section name (e.g. Electrical)" />
+      <select id="new-sec-type">
+        <option value="expense">Expense</option>
+        <option value="income">Income</option>
+      </select>
+      <button class="btn-add-sec" onclick="addSection()">Add Section</button>
+    </div>`;
 }
 
-function renderSection(section) {
-  const card = document.createElement('div');
-  card.className = 'section-card';
-  card.dataset.sectionId = section.id;
-  const projClass = section.project;
-  const typeClass = section.type === 'income' ? 'income-type' : 'expense-type';
-  const { budgetTotal, actualTotal } = sectionTotals(section);
-  const valCls = section.type === 'income' ? 'income-color' : 'expense-color';
-  const dText = diffText(section.type, budgetTotal, actualTotal);
-  const dCls  = diffCls(section.type, budgetTotal, actualTotal);
-  const projPill = section.project === 'il' ? '<span class="section-pill pill-il">IL</span>' : '<span class="section-pill pill-fl">FL</span>';
-  const typePill = section.type === 'income' ? '<span class="section-pill pill-income">Income</span>' : '<span class="section-pill pill-expense">Expense</span>';
-
-  card.innerHTML = `
-    <div class="section-header ${projClass} ${typeClass}" onclick="toggleSection('${section.id}')">
-      <div class="section-header-left">${projPill}${typePill}<span class="section-title">${section.label}</span></div>
-      <div class="section-totals-row">
-        <div class="section-total-group"><div class="stg-label">Budget</div><div class="stg-val ${valCls}">${fmt(budgetTotal)}</div></div>
-        <div class="section-total-group"><div class="stg-label">Actual</div><div class="stg-val ${valCls}">${actualTotal ? fmt(actualTotal) : '—'}</div></div>
-        <div class="section-total-group"><div class="stg-label">Diff</div><div class="stg-val ${dCls}">${dText}</div></div>
-        <span class="section-chevron open">▼</span>
+function renderSection(section){
+  const card=document.createElement('div');
+  card.className='section-card'; card.dataset.sectionId=section.id;
+  const projClass=section.project;
+  const typeClass=section.type==='income'?'income-type':'expense-type';
+  const {budgetTotal,actualTotal}=sectionTotals(section);
+  const valCls=section.type==='income'?'income-color':'expense-color';
+  const dText=diffText(section.type,budgetTotal,actualTotal);
+  const dCls=diffCls(section.type,budgetTotal,actualTotal);
+  const projPill=section.project==='il'?'<span class="section-pill pill-il">IL</span>':'<span class="section-pill pill-fl">FL</span>';
+  const typePill=section.type==='income'?'<span class="section-pill pill-income">Income</span>':'<span class="section-pill pill-expense">Expense</span>';
+  card.innerHTML=`
+    <div class="section-header ${projClass} ${typeClass}">
+      <div class="section-header-left" onclick="toggleSection('${section.id}')">
+        ${projPill}${typePill}
+        <input class="section-title-input" type="text" value="${escHtml(section.label)}"
+          onclick="event.stopPropagation()"
+          onchange="renameSection('${section.id}',this.value)"
+          oninput="scheduleSave()" />
+      </div>
+      <div style="display:flex;align-items:center;gap:4px;">
+        <div class="section-totals-row" onclick="toggleSection('${section.id}')">
+          <div class="section-total-group"><div class="stg-label">Budget</div><div class="stg-val ${valCls}">${fmt(budgetTotal)}</div></div>
+          <div class="section-total-group"><div class="stg-label">Actual</div><div class="stg-val ${valCls}">${actualTotal?fmt(actualTotal):'—'}</div></div>
+          <div class="section-total-group"><div class="stg-label">Diff</div><div class="stg-val ${dCls}">${dText}</div></div>
+        </div>
+        <div class="section-actions">
+          <button class="sec-del-btn" onclick="deleteSection('${section.id}')" title="Remove section">✕</button>
+          <span class="section-chevron open" onclick="toggleSection('${section.id}')">▼</span>
+        </div>
       </div>
     </div>
     <div class="section-body">
       <div class="col-header-row">
-        <div>Description</div>
-        <div class="ch-r">Budget</div>
-        <div></div>
-        <div class="ch-r">Actual</div>
-        <div></div>
-        <div class="ch-r">Difference</div>
-        <div></div>
+        <div>Description</div><div class="ch-r">Budget</div><div></div>
+        <div class="ch-r">Actual</div><div></div><div class="ch-r">Difference</div><div></div>
       </div>
       <div class="line-items" id="items-${section.id}">
-        ${section.items.map(item => renderItemHTML(item, section)).join('')}
+        ${section.items.map(item=>renderItemHTML(item,section)).join('')}
       </div>
       <div class="section-subtotals" id="subtotals-${section.id}">${subtotalsHTML(section)}</div>
       <div class="add-row">
-        <input class="inp-name"   type="text" placeholder="Item description" />
-        <input class="inp-budget" type="text" placeholder="$0" style="text-align:right;" />
-        <input class="inp-actual" type="text" placeholder="$0" style="text-align:right;" />
-        <button class="btn-add" onclick="addItem('${section.id}', this)">+ Add</button>
+        <input class="inp-name" type="text" placeholder="Item description"/>
+        <input class="inp-budget" type="text" placeholder="$0" style="text-align:right;"/>
+        <input class="inp-actual" type="text" placeholder="$0" style="text-align:right;"/>
+        <button class="btn-add" onclick="addItem('${section.id}',this)">+ Add</button>
       </div>
     </div>`;
   return card;
 }
 
-function renderItemHTML(item, section) {
-  const valCls = section.type === 'income' ? 'income-color' : 'expense-color';
-  const hasBH = (item.budgetHistory||[]).length > 0;
-  const hasAH = (item.actualHistory||[]).length > 0;
-  const dHtml = diffHTML(section.type, item.budget, item.actual);
+function renderItemHTML(item,section){
+  const valCls=section.type==='income'?'income-color':'expense-color';
+  const hasBH=(item.budgetHistory||[]).length>0;
+  const hasAH=(item.actualHistory||[]).length>0;
+  const dHtml=diffHTML(section.type,item.budget,item.actual);
+  // Store pre-edit value for accurate change tracking
   return `
     <div class="line-item" data-item-id="${item.id}" data-section-id="${section.id}">
       <input class="li-name" type="text" value="${escHtml(item.name)}" placeholder="Description"
-        onchange="updateItem('${section.id}','${item.id}','name',this.value)" oninput="scheduleSave()" />
-      <input class="li-budget ${valCls}" type="text" value="${item.budget ? fmt(item.budget) : ''}" placeholder="$0"
-        onchange="commitField('${section.id}','${item.id}','budget',this.value)"
-        onfocus="this.select()" oninput="liveCalc('${section.id}','${item.id}',this,'budget')" />
+        onchange="updateItemName('${section.id}','${item.id}',this.value)" oninput="scheduleSave()"/>
+      <input class="li-budget ${valCls}" type="text" value="${item.budget?fmt(item.budget):''}" placeholder="$0"
+        data-prev="${item.budget||0}"
+        onfocus="this.dataset.prev=this.value;this.select();"
+        onblur="onAmountBlur(this,'${section.id}','${item.id}','budget')"
+        oninput="liveCalc('${section.id}','${item.id}',this,'budget')"/>
       <button class="hist-btn ${hasBH?'has-history':''}" title="Budget history"
         onclick="showHistoryPopup(this,'${item.id}','${section.id}','budget')">⏱</button>
-      <input class="li-actual ${valCls}" type="text" value="${item.actual ? fmt(item.actual) : ''}" placeholder="$0"
-        onchange="commitField('${section.id}','${item.id}','actual',this.value)"
-        onfocus="this.select()" oninput="liveCalc('${section.id}','${item.id}',this,'actual')" />
+      <input class="li-actual ${valCls}" type="text" value="${item.actual?fmt(item.actual):''}" placeholder="$0"
+        data-prev="${item.actual||0}"
+        onfocus="this.dataset.prev=this.value;this.select();"
+        onblur="onAmountBlur(this,'${section.id}','${item.id}','actual')"
+        oninput="liveCalc('${section.id}','${item.id}',this,'actual')"/>
       <button class="hist-btn ${hasAH?'has-history':''}" title="Actual history"
         onclick="showHistoryPopup(this,'${item.id}','${section.id}','actual')">⏱</button>
       ${dHtml}
@@ -654,200 +587,240 @@ function renderItemHTML(item, section) {
     </div>`;
 }
 
-function subtotalsHTML(section) {
-  const { budgetTotal, actualTotal } = sectionTotals(section);
-  const valCls = section.type === 'income' ? 'income-color' : 'expense-color';
-  const dText = diffText(section.type, budgetTotal, actualTotal);
-  const dCls  = diffCls(section.type, budgetTotal, actualTotal);
-  return `
-    <div class="st-label">Total</div>
-    <div class="st-val ${valCls}">${fmt(budgetTotal)}</div>
-    <div></div>
-    <div class="st-val ${valCls}">${actualTotal ? fmt(actualTotal) : '—'}</div>
-    <div></div>
-    <div class="st-val ${dCls}">${dText}</div>
-    <div></div>`;
+function subtotalsHTML(section){
+  const {budgetTotal,actualTotal}=sectionTotals(section);
+  const valCls=section.type==='income'?'income-color':'expense-color';
+  const dText=diffText(section.type,budgetTotal,actualTotal);
+  const dCls=diffCls(section.type,budgetTotal,actualTotal);
+  return `<div class="st-label">Total</div>
+    <div class="st-val ${valCls}">${fmt(budgetTotal)}</div><div></div>
+    <div class="st-val ${valCls}">${actualTotal?fmt(actualTotal):'—'}</div><div></div>
+    <div class="st-val ${dCls}">${dText}</div><div></div>`;
 }
 
-function sectionTotals(section) {
+function sectionTotals(section){
   return {
-    budgetTotal: section.items.reduce((s,i) => s + parseAmt(i.budget), 0),
-    actualTotal: section.items.reduce((s,i) => s + parseAmt(i.actual), 0)
+    budgetTotal:section.items.reduce((s,i)=>s+parseAmt(i.budget),0),
+    actualTotal:section.items.reduce((s,i)=>s+parseAmt(i.actual),0)
   };
 }
 
-function escHtml(s) {
-  return String(s||'').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-}
-
-function renderSummary() {
+function renderSummary(){
   let budgetIncome=0, actualExpenses=0;
-  appData.sections.forEach(s => {
-    const { budgetTotal, actualTotal } = sectionTotals(s);
-    if (s.type==='income') budgetIncome += budgetTotal;
-    else actualExpenses += actualTotal;
+  appData.sections.forEach(s=>{
+    const {budgetTotal,actualTotal}=sectionTotals(s);
+    if(s.type==='income') budgetIncome+=budgetTotal;
+    else actualExpenses+=actualTotal;
   });
-  const remaining = budgetIncome - actualExpenses;
-  const isOver = remaining < 0;
-  document.getElementById('sum-budget-income').textContent   = fmt(budgetIncome);
-  document.getElementById('sum-actual-expenses').textContent = fmt(actualExpenses);
-  document.getElementById('net-amount').textContent          = fmt(Math.abs(remaining));
-  document.getElementById('net-label').textContent           = isOver ? '⚠ Over Budget' : '✓ Remaining Balance';
-  document.getElementById('net-sub').textContent             = isOver ? 'Actual spend exceeds budgeted income' : 'Budgeted income vs actual spend';
-  document.getElementById('net-amount').style.color          = isOver ? 'var(--red)' : 'var(--green)';
-  const banner = document.getElementById('status-banner');
-  if (budgetIncome === 0 && actualExpenses === 0) { banner.className = 'status-banner'; return; }
-  if (isOver) {
-    banner.className = 'status-banner overspend';
-    banner.textContent = `⚠ Actual spending is ${fmt(Math.abs(remaining))} over budgeted income across both projects.`;
-  } else {
-    banner.className = 'status-banner surplus';
-    banner.textContent = `✓ You have ${fmt(remaining)} remaining — budgeted income minus all actual spending.`;
-  }
+  const remaining=budgetIncome-actualExpenses;
+  const isOver=remaining<0;
+  document.getElementById('sum-budget-income').textContent=fmt(budgetIncome);
+  document.getElementById('sum-actual-expenses').textContent=fmt(actualExpenses);
+  document.getElementById('net-amount').textContent=fmt(Math.abs(remaining));
+  document.getElementById('net-label').textContent=isOver?'⚠ Over Budget':'✓ Remaining Balance';
+  document.getElementById('net-sub').textContent=isOver?'Actual spend exceeds budgeted income':'Budgeted income vs actual spend';
+  document.getElementById('net-amount').style.color=isOver?'var(--red)':'var(--green)';
+  const banner=document.getElementById('status-banner');
+  if(budgetIncome===0&&actualExpenses===0){ banner.className='status-banner'; return; }
+  if(isOver){ banner.className='status-banner overspend'; banner.textContent=`⚠ Actual spending is ${fmt(Math.abs(remaining))} over budgeted income across both projects.`; }
+  else { banner.className='status-banner surplus'; banner.textContent=`✓ You have ${fmt(remaining)} remaining — budgeted income minus all actual spending.`; }
 }
 
-// ── Mutations ──
-function liveCalc(sectionId, itemId, inputEl, field) {
-  const section = appData.sections.find(s=>s.id===sectionId);
-  if (!section) return;
-  const item = section.items.find(i=>i.id===itemId);
-  if (!item) return;
-  item[field] = parseAmt(inputEl.value);
-  // Update diff cell live
-  const row = inputEl.closest('.line-item');
-  if (row) {
-    const diffEl = row.querySelector('.li-diff');
-    if (diffEl) {
-      const newDiff = document.createElement('div');
-      newDiff.outerHTML; // dummy
-      const tmp = document.createElement('div');
-      tmp.innerHTML = diffHTML(section.type, item.budget, item.actual);
-      const newNode = tmp.firstChild;
-      diffEl.className = newNode.className;
-      diffEl.textContent = newNode.textContent;
+// ── MUTATIONS ──
+
+// Called on blur — formats the field and records history if value changed
+function onAmountBlur(inputEl, sectionId, itemId, field){
+  const section=appData.sections.find(s=>s.id===sectionId);
+  if(!section) return;
+  const item=section.items.find(i=>i.id===itemId);
+  if(!item) return;
+
+  const newVal=parseAmt(inputEl.value);
+  const oldVal=parseAmt(inputEl.dataset.prev||'0');
+
+  // Format the field with $ immediately on blur
+  inputEl.value = newVal ? fmt(newVal) : '';
+
+  // Only log if actually changed
+  if(newVal !== oldVal){
+    if(!item[field+'History']) item[field+'History']=[];
+    item[field+'History'].push({ts:Date.now(), user:currentUser, from:oldVal, to:newVal});
+    item[field]=newVal;
+    // Update history button indicator
+    const row=inputEl.closest('.line-item');
+    if(row){
+      const btns=row.querySelectorAll('.hist-btn');
+      const idx=field==='budget'?0:1;
+      if(btns[idx]) btns[idx].classList.add('has-history');
+    }
+    updateSectionHeaderTotals(sectionId);
+    renderSummary();
+    scheduleSave();
+  }
+  // Update diff cell in any case
+  const row=inputEl.closest('.line-item');
+  if(row){
+    const diffEl=row.querySelector('.li-diff');
+    if(diffEl){
+      const tmp=document.createElement('div');
+      tmp.innerHTML=diffHTML(section.type,item.budget,item.actual);
+      const newNode=tmp.firstChild;
+      diffEl.className=newNode.className;
+      diffEl.textContent=newNode.textContent;
     }
   }
-  const subtotalsEl = document.getElementById('subtotals-' + sectionId);
-  if (subtotalsEl) subtotalsEl.innerHTML = subtotalsHTML(section);
+  const subtotalsEl=document.getElementById('subtotals-'+sectionId);
+  if(subtotalsEl) subtotalsEl.innerHTML=subtotalsHTML(section);
+}
+
+function liveCalc(sectionId,itemId,inputEl,field){
+  const section=appData.sections.find(s=>s.id===sectionId);
+  if(!section) return;
+  const item=section.items.find(i=>i.id===itemId);
+  if(!item) return;
+  item[field]=parseAmt(inputEl.value);
+  const row=inputEl.closest('.line-item');
+  if(row){
+    const diffEl=row.querySelector('.li-diff');
+    if(diffEl){
+      const tmp=document.createElement('div');
+      tmp.innerHTML=diffHTML(section.type,item.budget,item.actual);
+      const n=tmp.firstChild;
+      diffEl.className=n.className; diffEl.textContent=n.textContent;
+    }
+  }
+  const subtotalsEl=document.getElementById('subtotals-'+sectionId);
+  if(subtotalsEl) subtotalsEl.innerHTML=subtotalsHTML(section);
   updateSectionHeaderTotals(sectionId);
   renderSummary();
 }
 
-function commitField(sectionId, itemId, field, rawValue) {
-  const section = appData.sections.find(s=>s.id===sectionId);
-  if (!section) return;
-  const item = section.items.find(i=>i.id===itemId);
-  if (!item) return;
-  const oldVal = item[field];
-  const newVal = parseAmt(rawValue);
-  if (oldVal !== newVal) {
-    if (!item[field+'History']) item[field+'History'] = [];
-    item[field+'History'].push({ ts: Date.now(), user: currentUser, from: oldVal, to: newVal });
-    item[field] = newVal;
-    // Refresh just this row's history button indicator
-    const row = document.querySelector(`.line-item[data-item-id="${itemId}"]`);
-    if (row) {
-      const btns = row.querySelectorAll('.hist-btn');
-      const idx = field === 'budget' ? 0 : 1;
-      if (btns[idx]) btns[idx].classList.add('has-history');
-    }
-  }
+function updateItemName(sectionId,itemId,value){
+  const section=appData.sections.find(s=>s.id===sectionId);
+  if(!section) return;
+  const item=section.items.find(i=>i.id===itemId);
+  if(!item) return;
+  item.name=value;
   scheduleSave();
 }
 
-function updateItem(sectionId, itemId, field, value) {
-  const section = appData.sections.find(s=>s.id===sectionId);
-  if (!section) return;
-  const item = section.items.find(i=>i.id===itemId);
-  if (!item) return;
-  item[field] = value;
-  scheduleSave();
-}
-
-function updateSectionHeaderTotals(sectionId) {
-  const section = appData.sections.find(s=>s.id===sectionId);
-  if (!section) return;
-  const { budgetTotal, actualTotal } = sectionTotals(section);
-  const card = document.querySelector(`[data-section-id="${sectionId}"]`);
-  if (!card) return;
-  const stgVals = card.querySelectorAll('.stg-val');
-  if (stgVals.length >= 3) {
-    stgVals[0].textContent = fmt(budgetTotal);
-    stgVals[1].textContent = actualTotal ? fmt(actualTotal) : '—';
-    stgVals[2].className = 'stg-val ' + diffCls(section.type, budgetTotal, actualTotal);
-    stgVals[2].textContent = diffText(section.type, budgetTotal, actualTotal);
+function updateSectionHeaderTotals(sectionId){
+  const section=appData.sections.find(s=>s.id===sectionId);
+  if(!section) return;
+  const {budgetTotal,actualTotal}=sectionTotals(section);
+  const card=document.querySelector(`[data-section-id="${sectionId}"]`);
+  if(!card) return;
+  const stgVals=card.querySelectorAll('.stg-val');
+  if(stgVals.length>=3){
+    stgVals[0].textContent=fmt(budgetTotal);
+    stgVals[1].textContent=actualTotal?fmt(actualTotal):'—';
+    stgVals[2].className='stg-val '+diffCls(section.type,budgetTotal,actualTotal);
+    stgVals[2].textContent=diffText(section.type,budgetTotal,actualTotal);
   }
 }
 
-function addItem(sectionId, btn) {
-  const row = btn.parentElement;
-  const name   = row.querySelector('.inp-name').value.trim();
-  const budget = parseAmt(row.querySelector('.inp-budget').value);
-  const actual = parseAmt(row.querySelector('.inp-actual') ? row.querySelector('.inp-actual').value : '0');
-  if (!name) { row.querySelector('.inp-name').focus(); return; }
-  const section = appData.sections.find(s=>s.id===sectionId);
-  if (!section) return;
-  const newItem = { id: uid(), name, budget, actual, budgetHistory: [], actualHistory: [] };
-  if (budget) newItem.budgetHistory.push({ ts: Date.now(), user: currentUser, from: 0, to: budget });
-  if (actual) newItem.actualHistory.push({ ts: Date.now(), user: currentUser, from: 0, to: actual });
+function addItem(sectionId,btn){
+  const row=btn.parentElement;
+  const name=row.querySelector('.inp-name').value.trim();
+  const budget=parseAmt(row.querySelector('.inp-budget').value);
+  const actual=parseAmt(row.querySelector('.inp-actual')?row.querySelector('.inp-actual').value:'0');
+  if(!name){ row.querySelector('.inp-name').focus(); return; }
+  const section=appData.sections.find(s=>s.id===sectionId);
+  if(!section) return;
+  const newItem={id:uid(),name,budget,actual,budgetHistory:[],actualHistory:[]};
+  // Log initial entry as "Added at $X"
+  if(budget||budget===0) newItem.budgetHistory.push({ts:Date.now(),user:currentUser,from:0,to:budget});
+  if(actual) newItem.actualHistory.push({ts:Date.now(),user:currentUser,from:0,to:actual});
   section.items.push(newItem);
-  const card = document.querySelector(`[data-section-id="${sectionId}"]`);
-  if (card) card.replaceWith(renderSection(section));
+  const card=document.querySelector(`[data-section-id="${sectionId}"]`);
+  if(card) card.replaceWith(renderSection(section));
+  renderSummary(); scheduleSave();
+}
+
+function deleteItem(sectionId,itemId){
+  const section=appData.sections.find(s=>s.id===sectionId);
+  if(!section) return;
+  if(!confirm('Remove this item?')) return;
+  section.items=section.items.filter(i=>i.id!==itemId);
+  const card=document.querySelector(`[data-section-id="${sectionId}"]`);
+  if(card) card.replaceWith(renderSection(section));
+  renderSummary(); scheduleSave();
+}
+
+function addSection(){
+  const nameEl=document.getElementById('new-sec-name');
+  const typeEl=document.getElementById('new-sec-type');
+  const name=nameEl.value.trim();
+  if(!name){ nameEl.focus(); return; }
+  const newSection={id:uid(),project:currentTab,type:typeEl.value,label:name,items:[]};
+  appData.sections.push(newSection);
+  nameEl.value='';
+  renderSections();
   renderSummary();
   scheduleSave();
 }
 
-function deleteItem(sectionId, itemId) {
-  const section = appData.sections.find(s=>s.id===sectionId);
-  if (!section) return;
-  if (!confirm('Remove this item?')) return;
-  section.items = section.items.filter(i=>i.id!==itemId);
-  const card = document.querySelector(`[data-section-id="${sectionId}"]`);
-  if (card) card.replaceWith(renderSection(section));
-  renderSummary();
+function deleteSection(sectionId){
+  const section=appData.sections.find(s=>s.id===sectionId);
+  if(!section) return;
+  if(!confirm(`Remove the "${section.label}" section and all its items?`)) return;
+  appData.sections=appData.sections.filter(s=>s.id!==sectionId);
+  renderSections(); renderSummary(); scheduleSave();
+}
+
+function renameSection(sectionId,value){
+  const section=appData.sections.find(s=>s.id===sectionId);
+  if(section) section.label=value;
   scheduleSave();
 }
 
-function toggleSection(id) {
-  const card = document.querySelector(`[data-section-id="${id}"]`);
-  if (!card) return;
+function toggleSection(id){
+  const card=document.querySelector(`[data-section-id="${id}"]`);
+  if(!card) return;
   card.classList.toggle('collapsed');
   card.querySelector('.section-chevron').classList.toggle('open');
 }
 
-function collectFromDOM() {
-  document.querySelectorAll('.line-item[data-item-id]').forEach(row => {
-    const section = appData.sections.find(s=>s.id===row.dataset.sectionId);
-    if (!section) return;
-    const item = section.items.find(i=>i.id===row.dataset.itemId);
-    if (!item) return;
-    const nameEl   = row.querySelector('.li-name');
-    const budgetEl = row.querySelector('.li-budget');
-    const actualEl = row.querySelector('.li-actual');
-    if (nameEl) item.name = nameEl.value;
-    if (budgetEl) item.budget = parseAmt(budgetEl.value);
-    if (actualEl) item.actual = parseAmt(actualEl.value);
+function collectFromDOM(){
+  document.querySelectorAll('.line-item[data-item-id]').forEach(row=>{
+    const section=appData.sections.find(s=>s.id===row.dataset.sectionId);
+    if(!section) return;
+    const item=section.items.find(i=>i.id===row.dataset.itemId);
+    if(!item) return;
+    const nameEl=row.querySelector('.li-name');
+    const budgetEl=row.querySelector('.li-budget');
+    const actualEl=row.querySelector('.li-actual');
+    if(nameEl) item.name=nameEl.value;
+    if(budgetEl) item.budget=parseAmt(budgetEl.value);
+    if(actualEl) item.actual=parseAmt(actualEl.value);
   });
-  appData.notes = document.getElementById('shared-notes').value;
+  appData.notes=document.getElementById('shared-notes').value;
+  // Collect section label renames
+  document.querySelectorAll('.section-title-input').forEach(inp=>{
+    const card=inp.closest('.section-card');
+    if(!card) return;
+    const section=appData.sections.find(s=>s.id===card.dataset.sectionId);
+    if(section) section.label=inp.value;
+  });
 }
 
-// ── Init ──
-(function init() {
-  const saved = sessionStorage.getItem(SESSION_KEY);
-  if (saved) {
-    try {
-      const s = JSON.parse(saved);
-      if (s.user && USERS[s.user]) {
-        currentUser = s.user;
-        document.getElementById('password-screen').style.display = 'none';
-        document.getElementById('main-header').style.display = 'flex';
-        document.getElementById('app-screen').style.display = 'block';
-        document.getElementById('user-badge').textContent = '👤 ' + currentUser;
+// ── INIT ──
+(function init(){
+  const saved=sessionStorage.getItem(SESSION_KEY);
+  if(saved){
+    try{
+      const s=JSON.parse(saved);
+      if(s.user&&USERS[s.user]){
+        currentUser=s.user;
+        document.getElementById('password-screen').style.display='none';
+        document.getElementById('main-header').style.display='flex';
+        document.getElementById('app-screen').style.display='block';
+        document.getElementById('user-badge').textContent='👤 '+currentUser;
         showLoading(true);
-        loadData().finally(() => showLoading(false));
+        loadData().finally(()=>showLoading(false));
         return;
       }
-    } catch(e) {}
+    }catch(e){}
   }
 })();
 </script>
