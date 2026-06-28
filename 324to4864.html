@@ -539,9 +539,9 @@ function deleteModalNote(noteId){
 }
 
 // ── SHAREPOINT POWER AUTOMATE FLOWS ──
-const SP_UPLOAD_URL = 'https://default6d110d893a2e413d9502459798d8be.0d.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/a1d1ad71b888417d8cd483de3cb4de24/triggers/manual/paths/invoke?api-version=1';
-const SP_LIST_URL   = 'https://default6d110d893a2e413d9502459798d8be.0d.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/96d02f3ca1df49e8b552131d9f7be169/triggers/manual/paths/invoke?api-version=1';
-const SP_GET_URL    = 'https://default6d110d893a2e413d9502459798d8be.0d.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/d9efff7e415342f1a69fc621c21ca94c/triggers/manual/paths/invoke?api-version=1';
+const SP_UPLOAD_URL = 'https://default6d110d893a2e413d9502459798d8be.0d.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/a1d1ad71b888417d8cd483de3cb4de24/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=TBSKwDtgJUJZlEh1aEaCPI8z5ky6GPhdQLrbrd6eXTU';
+const SP_LIST_URL   = 'https://default6d110d893a2e413d9502459798d8be.0d.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/96d02f3ca1df49e8b552131d9f7be169/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=dupxAbcwRMTrLbXYEpKn2qrtl58qwWoY-YN-RgQo60g';
+const SP_GET_URL    = 'https://default6d110d893a2e413d9502459798d8be.0d.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/d9efff7e415342f1a69fc621c21ca94c/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=Z-wJPGUMJ0g3AoUMLTqhrbINZOyDKrvoBS9pCDxWrJ0';
 
 async function spFetch(url, body){
   const res = await fetch(url, {
