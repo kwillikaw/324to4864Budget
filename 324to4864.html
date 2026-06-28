@@ -570,11 +570,18 @@ async function spFetch(url, body){
 // Extract files array from whatever shape the SP response comes back as
 function extractFiles(result){
   if(!result) return [];
+  // Power Automate wraps in {statusCode, headers, body}
+  if(result.statusCode!==undefined && result.body!==undefined){
+    const b=result.body;
+    if(Array.isArray(b)) return b;
+    if(b && Array.isArray(b.value)) return b.value;
+    if(typeof b==='string'){try{const p=JSON.parse(b);if(Array.isArray(p))return p;if(p&&p.value)return p.value;}catch(e){}}
+    if(b && typeof b==='object') return extractFiles(b);
+  }
   if(Array.isArray(result)) return result;
   if(Array.isArray(result.value)) return result.value;
   if(Array.isArray(result.body)) return result.body;
   if(result.body && Array.isArray(result.body.value)) return result.body.value;
-  // Sometimes Power Automate wraps in a single object
   if(result.FileLeafRef||result.Name||result.id) return [result];
   console.log('Unknown SP response shape:', JSON.stringify(result).slice(0,300));
   return [];
