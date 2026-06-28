@@ -544,15 +544,25 @@ const SP_LIST_URL   = 'https://default6d110d893a2e413d9502459798d8be.0d.environm
 const SP_GET_URL    = 'https://default6d110d893a2e413d9502459798d8be.0d.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/d9efff7e415342f1a69fc621c21ca94c/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=Z-wJPGUMJ0g3AoUMLTqhrbINZOyDKrvoBS9pCDxWrJ0';
 
 async function spFetch(url, body){
-  const res = await fetch(url, {
-    method:'POST',
-    headers:{'Content-Type':'application/json'},
-    body:JSON.stringify(body)
-  });
-  if(!res.ok) throw new Error('Flow error: '+res.status);
-  const text = await res.text();
-  console.log('SP response raw:', text);
-  try{ return text ? JSON.parse(text) : {}; } catch(e){ return {_raw: text}; }
+  const controller = new AbortController();
+  const timeout = setTimeout(()=>controller.abort(), 60000); // 60 second timeout
+  try{
+    const res = await fetch(url, {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify(body),
+      signal: controller.signal
+    });
+    clearTimeout(timeout);
+    if(!res.ok) throw new Error('Flow error: '+res.status);
+    const text = await res.text();
+    console.log('SP response raw:', text.slice(0,500));
+    try{ return text ? JSON.parse(text) : {}; } catch(e){ return {_raw: text}; }
+  } catch(e){
+    clearTimeout(timeout);
+    if(e.name==='AbortError') throw new Error('Request timed out after 60 seconds — try again');
+    throw e;
+  }
 }
 
 // Extract files array from whatever shape the SP response comes back as
