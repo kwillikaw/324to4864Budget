@@ -551,7 +551,29 @@ async function spFetch(url, body){
   });
   if(!res.ok) throw new Error('Flow error: '+res.status);
   const text = await res.text();
-  try{ return text ? JSON.parse(text) : {}; } catch(e){ return {}; }
+  console.log('SP response raw:', text);
+  try{ return text ? JSON.parse(text) : {}; } catch(e){ return {_raw: text}; }
+}
+
+// Extract files array from whatever shape the SP response comes back as
+function extractFiles(result){
+  if(!result) return [];
+  if(Array.isArray(result)) return result;
+  if(Array.isArray(result.value)) return result.value;
+  if(Array.isArray(result.body)) return result.body;
+  if(result.body && Array.isArray(result.body.value)) return result.body.value;
+  // Sometimes Power Automate wraps in a single object
+  if(result.FileLeafRef||result.Name||result.id) return [result];
+  console.log('Unknown SP response shape:', JSON.stringify(result).slice(0,300));
+  return [];
+}
+
+// Extract a usable field from SP file object, trying multiple possible property names
+function spField(f, ...keys){
+  for(const k of keys){
+    if(f[k]!==undefined&&f[k]!==null&&f[k]!=='') return f[k];
+  }
+  return null;
 }
 
 // ── ATTACHMENTS in modal ──
@@ -560,27 +582,19 @@ async function renderModalAttach(){
   const {attachArr}=getContextData(modalContext);
   const list=document.getElementById('modal-attach-list');
   list.innerHTML='<div class="modal-empty">Loading files from SharePoint…</div>';
-
-  // Always refresh from SharePoint on open
   try{
-    const contextLabel = getContextTitle(modalContext);
-    const result = await spFetch(SP_LIST_URL, {folder: contextLabel});
-    // result is array of SP file objects
-    const files = Array.isArray(result) ? result : (result.value||[]);
+    const result = await spFetch(SP_LIST_URL, {folder: getContextTitle(modalContext)});
+    const files = extractFiles(result);
+    console.log('Parsed files:', files.length, files[0]);
 
-    // Merge SP files with locally stored attachments (SP is source of truth for files)
-    // Store minimal metadata in JSONBin: {id, filename, spId, url, ts, user}
-    // Update attachArr to match what's in SP
     attachArr.length=0;
     files.forEach(f=>{
-      attachArr.push({
-        id: f.ID||f.id||uid(),
-        filename: f.FileLeafRef||f.Name||f.name||'File',
-        spId: String(f.ID||f.id||''),
-        url: f['{Link}']||f.LinkingUri||f.ServerRelativeUrl||'',
-        ts: f.Modified||f.TimeLastModified||Date.now(),
-        user: f.Editor?.LookupValue||f.author||'SharePoint'
-      });
+      const id   = spField(f,'ID','id','ItemId') || uid();
+      const name = spField(f,'FileLeafRef','Name','name','FileName','Title') || 'File';
+      const link = spField(f,'{Link}','LinkingUri','LinkingUrl','ServerRedirectedEmbedUrl','ServerRelativeUrl') || '';
+      const modified = spField(f,'Modified','TimeLastModified','LastModifiedDateTime') || '';
+      const editor = f.Editor?.LookupValue || f.Author?.LookupValue || spField(f,'ModifiedBy','CreatedBy','author') || 'SharePoint';
+      attachArr.push({id:String(id), filename:name, spId:String(id), url:link, ts:modified, user:editor});
     });
 
     if(attachArr.length===0){
@@ -591,16 +605,17 @@ async function renderModalAttach(){
           <div class="attach-icon">${fileIcon(a.filename)}</div>
           <div class="attach-body">
             <div class="attach-label">${escHtml(a.filename)}</div>
-            <div class="attach-meta">${fmtDT(a.ts)} · ${escHtml(a.user)}</div>
+            <div class="attach-meta">${a.ts?fmtDT(a.ts):''} · ${escHtml(a.user)}</div>
           </div>
-          <button class="attach-open-btn" onclick="openAttachment('${a.spId}')" title="Open file">↗</button>
-          <button class="attach-del-btn" onclick="deleteAttachment('${a.id}','${a.spId}')" title="Delete">✕</button>
+          <button class="attach-open-btn" onclick="openAttachment('${escHtml(a.spId)}',event)" title="Open file">↗</button>
+          <button class="attach-del-btn" onclick="deleteAttachment('${escHtml(a.id)}','${escHtml(a.spId)}')" title="Remove">✕</button>
         </div>`).join('');
     }
     updateContextBadges();
     scheduleSave();
   }catch(e){
     list.innerHTML=`<div class="modal-empty" style="color:var(--red);">Could not load files: ${e.message}</div>`;
+    console.error('SP list error:', e);
   }
 }
 
@@ -615,19 +630,22 @@ function fileIcon(name){
   return '📄';
 }
 
-async function openAttachment(spId){
+async function openAttachment(spId, evt){
   if(!spId){ showToast('No file ID available'); return; }
-  const btn=event.target;
-  btn.textContent='…';
+  const btn = evt ? evt.target : null;
+  if(btn) btn.textContent='…';
   try{
     const result = await spFetch(SP_GET_URL, {fileId: spId});
-    const url = typeof result==='string' ? result : (result.url||result['{Link}']||result.LinkingUri||'');
+    console.log('SP get file result:', result);
+    const url = typeof result==='string'
+      ? result
+      : spField(result,'{Link}','LinkingUri','LinkingUrl','ServerRedirectedEmbedUrl','link','url','body') || '';
     if(url) window.open(url,'_blank');
-    else showToast('Could not get file link');
+    else showToast('Could not get file link — check console for details');
   }catch(e){
     showToast('Error opening file: '+e.message, 4000);
   }
-  btn.textContent='↗';
+  if(btn) btn.textContent='↗';
 }
 
 async function submitAttachment(){
@@ -639,10 +657,9 @@ async function submitAttachment(){
   const uploadBtn=document.getElementById('attach-upload-btn');
   const statusEl=document.getElementById('attach-upload-status');
   uploadBtn.disabled=true; uploadBtn.textContent='Uploading…';
-  statusEl.textContent='Reading file…'; statusEl.style.color=getComputedStyle(document.documentElement).getPropertyValue('--muted');
+  statusEl.style.color='var(--muted)'; statusEl.textContent='Reading file…';
 
   try{
-    // Read file as base64
     const base64 = await new Promise((resolve,reject)=>{
       const reader=new FileReader();
       reader.onload=e=>resolve(e.target.result.split(',')[1]);
@@ -651,36 +668,39 @@ async function submitAttachment(){
     });
 
     statusEl.textContent='Uploading to SharePoint…';
-    const contextLabel=getContextTitle(modalContext);
     const result = await spFetch(SP_UPLOAD_URL,{
       filename: file.name,
       content: base64,
-      folder: contextLabel,
+      folder: getContextTitle(modalContext),
       uploadedBy: currentUser
     });
+    console.log('Upload result:', result);
 
-    statusEl.textContent='✓ Uploaded successfully!';
+    // Show success message
     statusEl.style.color='var(--green)';
+    statusEl.textContent='✓ '+file.name+' uploaded successfully!';
     fileInput.value='';
-    setTimeout(()=>{ statusEl.textContent=''; },3000);
-    // Refresh the list
+
+    // Refresh the file list
     await renderModalAttach();
+
+    // Clear message after 4 seconds
+    setTimeout(()=>{ statusEl.textContent=''; },4000);
   }catch(e){
-    statusEl.textContent='Upload failed: '+e.message;
     statusEl.style.color='var(--red)';
+    statusEl.textContent='Upload failed: '+e.message;
+    console.error('Upload error:', e);
   }
   uploadBtn.disabled=false; uploadBtn.textContent='Upload';
 }
 
 async function deleteAttachment(attachId, spId){
-  if(!confirm('Delete this file from SharePoint?')) return;
+  if(!confirm('Remove this file from the list?\n\nNote: the file will remain in the SharePoint folder.')) return;
   const {attachArr}=getContextData(modalContext);
   const idx=attachArr.findIndex(a=>a.id==attachId);
   if(idx>-1) attachArr.splice(idx,1);
-  // Re-render — note: actual SP deletion would need a 4th flow
-  // For now remove from local list and save; file remains in SP but won't show
-  showToast('Removed from this item. File remains in SharePoint folder.');
-  renderModalAttach();
+  showToast('Removed from this item.');
+  await renderModalAttach();
   updateContextBadges();
   scheduleSave();
 }
