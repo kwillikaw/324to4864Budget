@@ -556,9 +556,9 @@ async function spFetch(url, body){
     clearTimeout(timeout);
     if(!res.ok) throw new Error('Flow error: '+res.status);
     const text = await res.text();
-    console.log('SP response raw:', text.slice(0,2000));
-    // DEBUG: show raw response on screen temporarily
-    document.getElementById('modal-attach-list').innerHTML = '<div style="padding:10px;font-size:0.75rem;word-break:break-all;background:#f0ede8;">RAW: '+escHtml(text.slice(0,1000))+'</div>';
+    console.log('SP response raw (first 500):', text.slice(0,500));
+    console.log('SP response raw (last 500):', text.slice(-500));
+    try{ const tmp=JSON.parse(text); console.log('SP body:', JSON.stringify(tmp.body).slice(0,1000)); }catch(e){}
     try{ return text ? JSON.parse(text) : {}; } catch(e){ return {_raw: text}; }
   } catch(e){
     clearTimeout(timeout);
