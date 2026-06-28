@@ -557,6 +557,8 @@ async function spFetch(url, body){
     if(!res.ok) throw new Error('Flow error: '+res.status);
     const text = await res.text();
     console.log('SP response raw:', text.slice(0,2000));
+    // DEBUG: show raw response on screen temporarily
+    document.getElementById('modal-attach-list').innerHTML = '<div style="padding:10px;font-size:0.75rem;word-break:break-all;background:#f0ede8;">RAW: '+escHtml(text.slice(0,1000))+'</div>';
     try{ return text ? JSON.parse(text) : {}; } catch(e){ return {_raw: text}; }
   } catch(e){
     clearTimeout(timeout);
