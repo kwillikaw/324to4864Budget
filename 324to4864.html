@@ -69,21 +69,21 @@
 
   /* SECTION CARDS */
   .section-card{background:var(--white);border-radius:var(--radius);box-shadow:var(--shadow);margin-bottom:16px;overflow:hidden;}
-  .section-header{display:flex;align-items:center;justify-content:space-between;padding:13px 16px;border-left:4px solid transparent;transition:background 0.15s;}
+  .section-header{display:flex;align-items:center;justify-content:space-between;padding:13px 16px;border-left:4px solid transparent;transition:background 0.15s;flex-wrap:wrap;gap:8px;}
   .section-header:hover{background:var(--cream);}
   .section-header.il{border-left-color:var(--il-accent);}
   .section-header.fl{border-left-color:var(--fl-accent);}
   .section-header.income-type{border-left-color:var(--green);}
   .section-header.expense-type{border-left-color:var(--gold);}
-  .section-header-left{display:flex;align-items:center;gap:8px;flex-wrap:wrap;flex:1;cursor:pointer;}
-  .section-pill{font-size:0.66rem;padding:2px 7px;border-radius:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;}
+  .section-header-left{display:flex;align-items:center;gap:8px;flex-wrap:wrap;flex:1 1 100%;cursor:pointer;min-width:0;}
+  .section-pill{font-size:0.66rem;padding:2px 7px;border-radius:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;flex-shrink:0;}
   .pill-il{background:#dceaf8;color:var(--il-accent);}
   .pill-fl{background:#fde9d6;color:var(--fl-accent);}
   .pill-income{background:var(--green-lt);color:var(--green);}
   .pill-expense{background:#fef9ec;color:#9a7020;}
-  .section-title-input{font-size:0.92rem;font-weight:600;color:var(--navy);border:none;background:transparent;outline:none;font-family:inherit;cursor:text;min-width:80px;max-width:240px;}
+  .section-title-input{font-size:0.92rem;font-weight:600;color:var(--navy);border:none;background:transparent;outline:none;font-family:inherit;cursor:text;flex:1 1 auto;min-width:100px;width:100%;}
   .section-title-input:focus{background:#efefeb;border-radius:4px;padding:2px 6px;}
-  .section-totals-row{display:flex;align-items:center;gap:12px;flex-shrink:0;cursor:pointer;}
+  .section-totals-row{display:flex;align-items:center;gap:12px;flex-shrink:0;cursor:pointer;flex:1 1 auto;}
   .section-total-group{text-align:right;}
   .stg-label{font-size:0.62rem;text-transform:uppercase;letter-spacing:0.05em;color:var(--muted);}
   .stg-val{font-size:0.9rem;font-weight:700;}
@@ -770,7 +770,7 @@ function renderSection(section){
         <input class="section-title-input" type="text" value="${escHtml(section.label)}"
           onclick="event.stopPropagation()" onchange="renameSection('${section.id}',this.value)" oninput="scheduleSave()"/>
       </div>
-      <div style="display:flex;align-items:center;gap:4px;">
+      <div style="display:flex;align-items:center;gap:4px;flex:1 1 100%;justify-content:space-between;">
         <div class="section-totals-row" onclick="toggleSection('${section.id}')">
           <div class="section-total-group"><div class="stg-label">Budget</div><div class="stg-val ${valCls}">${fmt(budgetTotal)}</div></div>
           <div class="section-total-group"><div class="stg-label">Actual</div><div class="stg-val ${valCls}">${actualTotal?fmt(actualTotal):'—'}</div></div>
