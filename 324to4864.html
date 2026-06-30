@@ -120,6 +120,7 @@
   .li-budget:focus,.li-actual:focus{background:#efefeb;border-radius:4px;padding:2px 5px;}
   .li-budget.income-color,.li-actual.income-color{color:var(--green);}
   .li-budget.expense-color,.li-actual.expense-color{color:var(--navy);}
+  .line-item-fields-row{display:contents;}
   .li-diff{text-align:right;font-size:0.82rem;font-weight:700;padding-right:2px;}
   .li-diff.positive{color:var(--green);}
   .li-diff.negative{color:var(--red);}
@@ -200,6 +201,13 @@
   .note-link{display:inline-block;margin-top:5px;font-size:0.8rem;color:var(--il-accent);text-decoration:none;word-break:break-all;}
   .note-link:hover{text-decoration:underline;}
   .note-del-btn{width:20px;height:20px;border-radius:50%;background:none;border:none;cursor:pointer;font-size:0.72rem;color:var(--muted);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;opacity:0.4;transition:all 0.15s;}
+  .note-edit-btn{width:20px;height:20px;border-radius:50%;background:none;border:none;cursor:pointer;font-size:0.74rem;color:var(--muted);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;opacity:0.4;transition:all 0.15s;}
+  .note-entry:hover .note-edit-btn{opacity:1;}
+  .note-edit-btn:hover{background:#dceaf8;color:var(--il-accent);}
+  .note-entry-editing{background:var(--cream);}
+  .note-edit-textarea{width:100%;min-height:60px;border:1.5px solid var(--navy);border-radius:8px;padding:8px 10px;font-size:0.85rem;font-family:inherit;resize:vertical;outline:none;margin-bottom:6px;}
+  .note-edit-url{width:100%;border:1.5px solid var(--border);border-radius:8px;padding:7px 10px;font-size:0.8rem;font-family:inherit;outline:none;margin-bottom:8px;}
+  .note-edit-actions{display:flex;gap:8px;}
   .note-entry:hover .note-del-btn{opacity:1;}
   .note-del-btn:hover{background:var(--red-lt);color:var(--red);}
   .modal-empty{padding:24px 20px;color:var(--muted);font-size:0.85rem;text-align:center;}
@@ -249,6 +257,32 @@
   }
   @media(max-width:520px){
     .col-header-row,.line-item,.section-subtotals{grid-template-columns:1fr 75px 26px 75px 26px 60px 20px 20px 20px 20px;}
+  }
+  @media(max-width:430px){
+    .col-header-row{display:none;}
+    .line-item{
+      display:grid;
+      grid-template-columns:1fr;
+      gap:6px;
+      padding:10px 14px;
+    }
+    .line-item .li-name{font-weight:600;font-size:0.92rem;}
+    .line-item-fields-row{
+      display:flex !important;
+      align-items:center;
+      gap:5px;
+      flex-wrap:wrap;
+    }
+    .line-item-fields-row .li-budget,
+    .line-item-fields-row .li-actual{flex:1 1 70px;min-width:60px;}
+    .line-item-fields-row .li-diff{flex:0 0 60px;}
+    .line-item-fields-row .hist-btn,
+    .line-item-fields-row .li-icon-btn,
+    .line-item-fields-row .delete-btn{flex:0 0 auto;}
+    .section-subtotals{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:6px;}
+    .section-subtotals .st-val{flex:0 0 auto;}
+    .add-row{grid-template-columns:1fr;}
+    .add-row .inp-budget,.add-row .inp-actual{flex:1;}
   }
 </style>
 </head>
@@ -494,12 +528,13 @@ function getContextTitle(ctx){
 function openModal(ctx, startTab='notes'){
   modalContext=ctx;
   modalActiveTab=startTab;
+  editingNoteId=null;
   document.getElementById('modal-title').textContent=getContextTitle(ctx);
   switchModalTab(startTab);
   document.getElementById('modal-overlay').style.display='flex';
   setTimeout(()=>{ if(startTab==='notes') document.getElementById('modal-note-input').focus(); },50);
 }
-function closeModal(){ document.getElementById('modal-overlay').style.display='none'; modalContext=null; }
+function closeModal(){ document.getElementById('modal-overlay').style.display='none'; modalContext=null; editingNoteId=null; }
 function switchModalTab(tab){
   modalActiveTab=tab;
   document.querySelectorAll('.modal-tab').forEach(b=>b.classList.remove('active'));
@@ -511,20 +546,66 @@ function switchModalTab(tab){
 function openGlobalNotes(){ openModal({type:'global'},'notes'); }
 
 // ── NOTES in modal ──
+let editingNoteId = null;
+
 function renderModalNotes(){
   if(!modalContext) return;
   const {notesArr}=getContextData(modalContext);
   const list=document.getElementById('modal-notes-list');
   if(!notesArr||notesArr.length===0){ list.innerHTML='<div class="modal-empty">No notes yet.</div>'; return; }
-  list.innerHTML=[...notesArr].reverse().map(n=>`
+  list.innerHTML=[...notesArr].reverse().map(n=>{
+    if(editingNoteId===n.id){
+      return `
+      <div class="note-entry note-entry-editing">
+        <div class="note-entry-body">
+          <textarea class="note-edit-textarea" id="edit-text-${n.id}">${escHtml(n.text)}</textarea>
+          <input type="url" class="note-edit-url" id="edit-url-${n.id}" placeholder="Optional link (https://…)" value="${escHtml(n.url||'')}"/>
+          <div class="note-edit-actions">
+            <button class="btn-add-modal" style="padding:5px 12px;font-size:0.78rem;" onclick="saveEditedNote('${n.id}')">Save</button>
+            <button class="btn-secondary" style="padding:5px 12px;font-size:0.78rem;" onclick="cancelEditNote()">Cancel</button>
+          </div>
+        </div>
+      </div>`;
+    }
+    return `
     <div class="note-entry">
       <div class="note-entry-body">
-        <div class="note-entry-meta">${fmtDT(n.ts)} · ${escHtml(n.user)}</div>
+        <div class="note-entry-meta">${fmtDT(n.ts)} · ${escHtml(n.user)}${n.editedTs?' · edited':''}</div>
         <div class="note-entry-text">${escHtml(n.text)}</div>
         ${n.url?`<a class="note-link" href="${escHtml(n.url)}" target="_blank" rel="noopener">🔗 ${escHtml(n.url)}</a>`:''}
       </div>
-      <button class="note-del-btn" onclick="deleteModalNote('${n.id}')">✕</button>
-    </div>`).join('');
+      <button class="note-edit-btn" onclick="startEditNote('${n.id}')" title="Edit">✎</button>
+      <button class="note-del-btn" onclick="deleteModalNote('${n.id}')" title="Delete">✕</button>
+    </div>`;
+  }).join('');
+}
+
+function startEditNote(noteId){
+  editingNoteId = noteId;
+  renderModalNotes();
+  setTimeout(()=>{ const el=document.getElementById('edit-text-'+noteId); if(el){ el.focus(); el.setSelectionRange(el.value.length,el.value.length); } },30);
+}
+function cancelEditNote(){
+  editingNoteId = null;
+  renderModalNotes();
+}
+function saveEditedNote(noteId){
+  if(!modalContext) return;
+  const {notesArr}=getContextData(modalContext);
+  const note=notesArr.find(n=>n.id===noteId);
+  if(!note) return;
+  const textEl=document.getElementById('edit-text-'+noteId);
+  const urlEl=document.getElementById('edit-url-'+noteId);
+  let newText=textEl.value.trim();
+  let newUrl=urlEl.value.trim();
+  if(newUrl && !/^https?:\/\//i.test(newUrl)) newUrl='https://'+newUrl;
+  if(!newText && !newUrl){ showToast('Note cannot be empty'); return; }
+  note.text = newText || '(link)';
+  note.url = newUrl || null;
+  note.editedTs = Date.now();
+  editingNoteId = null;
+  renderModalNotes();
+  scheduleSave();
 }
 function submitModalNote(){
   if(!modalContext) return;
@@ -828,6 +909,7 @@ function renderItemHTML(item,section){
     <div class="line-item" data-item-id="${item.id}" data-section-id="${section.id}">
       <input class="li-name" type="text" value="${escHtml(item.name)}" placeholder="Description"
         onchange="updateItemName('${section.id}','${item.id}',this.value)" oninput="scheduleSave()"/>
+      <div class="line-item-fields-row">
       <input class="li-budget ${valCls}" type="text" value="${item.budget?fmt(item.budget):''}" placeholder="$0"
         onfocus="this.dataset.prev=this.value;this.select();"
         onblur="onAmountBlur(this,'${section.id}','${item.id}','budget')"
@@ -846,6 +928,7 @@ function renderItemHTML(item,section){
       <button class="li-icon-btn li-attach-btn${hasAttach?' has-items':''}" title="Item attachments"
         onclick="openModal({type:'item',sectionId:'${section.id}',itemId:'${item.id}'},'attach')">📎</button>
       <button class="delete-btn" onclick="deleteItem('${section.id}','${item.id}')" title="Remove">✕</button>
+      </div>
     </div>`;
 }
 
