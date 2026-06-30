@@ -288,6 +288,7 @@
     <span class="last-saved" id="last-saved">Last saved: never</span>
     <div class="toolbar-spacer"></div>
     <button class="btn-notes" onclick="openGlobalNotes()">📝 Notes</button>
+    <button class="btn-secondary" onclick="downloadAllAttachments()">📦 Open Drive Folder</button>
     <button class="btn-secondary" onclick="saveData()">💾 Save Now</button>
     <button class="btn-secondary" onclick="loadData()">🔄 Refresh</button>
     <button class="btn-secondary" onclick="signOut()">Sign Out</button>
@@ -343,10 +344,10 @@
     <div class="modal-tab-content" id="tab-attach">
       <div class="attach-list" id="modal-attach-list"></div>
       <div class="attach-add-section">
-        <div class="attach-sharepoint-note">📎 Files attached here are stored with this budget item. Small files (&lt;500KB) are stored directly. Larger files link to your Google Drive folder.</div>
+        <div class="attach-sharepoint-note">📎 Files upload directly to your shared Google Drive folder. First upload on each device will ask you to sign in with squirrelinone@gmail.com.</div>
         <div class="field-row">
           <input type="file" id="attach-file-input" style="flex:1;border:1.5px solid var(--border);border-radius:6px;padding:6px 9px;font-size:0.82rem;background:var(--white);font-family:inherit;outline:none;"/>
-          <button class="btn-add-modal" id="attach-upload-btn" onclick="submitAttachment()">Attach</button>
+          <button class="btn-add-modal" id="attach-upload-btn" onclick="submitAttachment()">Upload</button>
         </div>
         <div id="attach-upload-status" style="font-size:0.78rem;margin-top:6px;min-height:18px;"></div>
       </div>
@@ -539,40 +540,61 @@ function deleteModalNote(noteId){
 }
 
 // ── GOOGLE DRIVE ATTACHMENT SYSTEM ──
+const GDRIVE_CLIENT_ID = '211325225077-e9eljjv462172tcqmpk3j25dg1kfgd6h.apps.googleusercontent.com';
 const GDRIVE_FOLDER_ID = '1CNq8fXmJBz2SoZUyPSE1VS9mkgMVLP8B';
+const GDRIVE_SCOPE = 'https://www.googleapis.com/auth/drive.file';
+let gdriveTokenClient = null;
+let gdriveAccessToken = null;
+let gdriveTokenExpiry = 0;
 
-async function callClaude(prompt, imageData=null){
-  const messages = [{role:'user', content: imageData
-    ? [{type:'text',text:prompt},{type:'image',source:{type:'base64',media_type:imageData.type,data:imageData.data}}]
-    : prompt
-  }];
-  const res = await fetch('https://api.anthropic.com/v1/messages',{
-    method:'POST',
-    headers:{'Content-Type':'application/json'},
-    body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:1000,messages})
+function loadGoogleScript(){
+  return new Promise((resolve,reject)=>{
+    if(window.google && window.google.accounts){ resolve(); return; }
+    const script=document.createElement('script');
+    script.src='https://accounts.google.com/gsi/client';
+    script.onload=resolve;
+    script.onerror=reject;
+    document.head.appendChild(script);
   });
-  if(!res.ok) throw new Error('API error: '+res.status);
-  const data = await res.json();
-  return data.content[0].text;
 }
 
-async function gdriveUpload(filename, base64data, mimeType){
-  // Use Claude API to upload file to Google Drive
-  const prompt = `Upload a file to Google Drive folder ${GDRIVE_FOLDER_ID}.
-Filename: ${filename}
-MimeType: ${mimeType}
-Base64 data length: ${base64data.length} chars
-Uploaded by: ${currentUser}
+async function ensureGDriveAuth(){
+  await loadGoogleScript();
+  if(gdriveAccessToken && Date.now() < gdriveTokenExpiry){
+    return gdriveAccessToken;
+  }
+  return new Promise((resolve,reject)=>{
+    gdriveTokenClient = google.accounts.oauth2.initTokenClient({
+      client_id: GDRIVE_CLIENT_ID,
+      scope: GDRIVE_SCOPE,
+      callback: (resp)=>{
+        if(resp.error){ reject(new Error(resp.error)); return; }
+        gdriveAccessToken = resp.access_token;
+        gdriveTokenExpiry = Date.now() + (resp.expires_in*1000) - 60000;
+        resolve(gdriveAccessToken);
+      }
+    });
+    gdriveTokenClient.requestAccessToken();
+  });
+}
 
-Please use the Google Drive API to upload this file and return ONLY a JSON object like:
-{"success":true,"fileId":"xxx","filename":"${filename}","viewUrl":"https://drive.google.com/file/d/xxx/view"}
+function fileIcon(name){
+  if(!name) return '📄';
+  const ext=(name.split('.').pop()||'').toLowerCase();
+  if(['jpg','jpeg','png','gif','webp'].includes(ext)) return '🖼';
+  if(['pdf'].includes(ext)) return '📕';
+  if(['doc','docx'].includes(ext)) return '📘';
+  if(['xls','xlsx'].includes(ext)) return '📗';
+  if(['ppt','pptx'].includes(ext)) return '📙';
+  if(['zip'].includes(ext)) return '🗜';
+  return '📄';
+}
 
-The base64 data is: ${base64data}`;
-
-  // Since Claude API can't directly call Google Drive, we store file metadata in JSONBin
-  // and provide a direct upload link approach
-  const fileId = uid();
-  return {success:true, fileId, filename, viewUrl:null};
+function fmtBytes(n){
+  if(!n) return '';
+  if(n<1024) return n+' B';
+  if(n<1048576) return (n/1024).toFixed(0)+' KB';
+  return (n/1048576).toFixed(1)+' MB';
 }
 
 // ── ATTACHMENTS in modal ──
@@ -586,27 +608,24 @@ async function renderModalAttach(){
   } else {
     list.innerHTML=attachArr.map(a=>`
       <div class="attach-entry">
-        <div class="attach-icon">${fileIcon(a.filename||a.name||'')}</div>
+        <div class="attach-icon">${fileIcon(a.filename||'')}</div>
         <div class="attach-body">
-          <div class="attach-label">${escHtml(a.filename||a.name||'File')}</div>
-          <div class="attach-meta">${a.ts?fmtDT(a.ts):''} · ${escHtml(a.user||'')}</div>
+          <div class="attach-label">${escHtml(a.filename||'File')}</div>
+          <div class="attach-meta">${fmtBytes(a.size)} · ${a.ts?fmtDT(a.ts):''} · ${escHtml(a.user||'')}</div>
         </div>
-        ${a.viewUrl?`<button class="attach-open-btn" onclick="window.open('${escHtml(a.viewUrl)}','_blank')" title="Open in Google Drive">↗</button>`:''}
+        <button class="attach-open-btn" onclick="viewAttachment('${escHtml(a.id)}')" title="Open in Google Drive">↗</button>
         <button class="attach-del-btn" onclick="deleteAttachment('${escHtml(a.id)}')" title="Remove">✕</button>
       </div>`).join('');
   }
   updateContextBadges();
 }
 
-function fileIcon(name){
-  if(!name) return '📄';
-  const ext=(name.split('.').pop()||'').toLowerCase();
-  if(['jpg','jpeg','png','gif','webp'].includes(ext)) return '🖼';
-  if(['pdf'].includes(ext)) return '📕';
-  if(['doc','docx'].includes(ext)) return '📘';
-  if(['xls','xlsx'].includes(ext)) return '📗';
-  if(['ppt','pptx'].includes(ext)) return '📙';
-  return '📄';
+function viewAttachment(attachId){
+  if(!modalContext) return;
+  const {attachArr}=getContextData(modalContext);
+  const a=attachArr.find(x=>x.id===attachId);
+  if(!a||!a.driveFileId){ showToast('File link not available'); return; }
+  window.open(`https://drive.google.com/file/d/${a.driveFileId}/view`, '_blank');
 }
 
 async function submitAttachment(){
@@ -617,54 +636,53 @@ async function submitAttachment(){
 
   const uploadBtn=document.getElementById('attach-upload-btn');
   const statusEl=document.getElementById('attach-upload-status');
-  uploadBtn.disabled=true; uploadBtn.textContent='Uploading…';
-  statusEl.style.color='var(--muted)'; statusEl.textContent='Reading file…';
+  uploadBtn.disabled=true; uploadBtn.textContent='Connecting…';
+  statusEl.style.color='var(--muted)'; statusEl.textContent='Signing in to Google Drive…';
 
   try{
-    const base64 = await new Promise((resolve,reject)=>{
-      const reader=new FileReader();
-      reader.onload=e=>resolve(e.target.result.split(',')[1]);
-      reader.onerror=reject;
-      reader.readAsDataURL(file);
-    });
+    const token = await ensureGDriveAuth();
 
     statusEl.textContent='Uploading to Google Drive…';
+    uploadBtn.textContent='Uploading…';
 
-    // Call Google Drive upload via multipart form
-    // Build metadata
     const metadata = {
       name: file.name,
       parents: [GDRIVE_FOLDER_ID],
-      description: `Uploaded by ${currentUser} for ${getContextTitle(modalContext)}`
+      description: `Uploaded by ${currentUser} for ${getContextTitle(modalContext)} — 324to4864 Budget App`
     };
 
-    // We use the resumable upload approach via fetch with Drive API v3
-    // First get an access token via the implicit grant - but since we can't do OAuth here,
-    // store the file reference in JSONBin and provide a Google Drive upload link
+    const form = new FormData();
+    form.append('metadata', new Blob([JSON.stringify(metadata)], {type:'application/json'}));
+    form.append('file', file);
+
+    const res = await fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id,name,webViewLink', {
+      method: 'POST',
+      headers: {'Authorization': 'Bearer '+token},
+      body: form
+    });
+
+    if(!res.ok){
+      const errText = await res.text();
+      throw new Error('Upload failed: '+res.status+' '+errText.slice(0,200));
+    }
+
+    const result = await res.json();
+
     const {attachArr}=getContextData(modalContext);
-    const newAttach = {
+    attachArr.push({
       id: uid(),
       filename: file.name,
       ts: Date.now(),
       user: currentUser,
       size: file.size,
-      mimeType: file.type,
-      folderId: GDRIVE_FOLDER_ID,
-      viewUrl: `https://drive.google.com/drive/folders/${GDRIVE_FOLDER_ID}`,
-      status: 'pending'
-    };
+      mimeType: file.type || 'application/octet-stream',
+      driveFileId: result.id,
+      webViewLink: result.webViewLink
+    });
 
-    // Store file as base64 in attachment record (for small files < 1MB)
-    // For larger files, just store the reference
-    if(file.size < 500000){
-      newAttach.base64 = base64;
-      newAttach.status = 'stored';
-    }
-
-    attachArr.push(newAttach);
     fileInput.value='';
     statusEl.style.color='var(--green)';
-    statusEl.textContent='✓ '+file.name+' attached!';
+    statusEl.textContent='✓ '+file.name+' uploaded to Google Drive!';
     renderModalAttach();
     updateContextBadges();
     scheduleSave();
@@ -673,19 +691,20 @@ async function submitAttachment(){
   }catch(e){
     statusEl.style.color='var(--red)';
     statusEl.textContent='Failed: '+e.message;
+    console.error('GDrive upload error:', e);
   }
   uploadBtn.disabled=false; uploadBtn.textContent='Upload';
 }
 
 function deleteAttachment(attachId){
-  if(!modalContext||!confirm('Remove this attachment?')) return;
+  if(!modalContext||!confirm('Remove this attachment from the list?\n\nNote: the file will remain in your Google Drive folder.')) return;
   const {attachArr}=getContextData(modalContext);
   const idx=attachArr.findIndex(a=>a.id===attachId);
   if(idx>-1) attachArr.splice(idx,1);
   renderModalAttach();
   updateContextBadges();
   scheduleSave();
-  showToast('Attachment removed.');
+  showToast('Removed from this item.');
 }
 
 function updateContextBadges(){
@@ -715,6 +734,12 @@ function updateContextBadges(){
     }
   }
 }
+
+// ── VIEW ALL ATTACHMENTS (opens Drive folder) ──
+function downloadAllAttachments(){
+  window.open(`https://drive.google.com/drive/folders/${GDRIVE_FOLDER_ID}`, '_blank');
+}
+
 // ── RENDER ──
 function setTab(tab){ currentTab=tab; document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active')); document.querySelector(`.tab-btn.${tab}`).classList.add('active'); renderAll(); }
 function renderAll(){ renderSections(); renderSummary(); }
