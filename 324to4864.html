@@ -777,6 +777,8 @@ function renderSection(section){
           <div class="section-total-group"><div class="stg-label">Diff</div><div class="stg-val ${dCls}">${dText}</div></div>
         </div>
         <div class="section-actions">
+          <button class="sec-icon-btn sec-move-btn" title="Move section up" onclick="moveSection('${section.id}',-1)">▲</button>
+          <button class="sec-icon-btn sec-move-btn" title="Move section down" onclick="moveSection('${section.id}',1)">▼</button>
           <button class="sec-icon-btn sec-notes-btn${hasNotes?' has-items':''}" title="Section notes"
             onclick="openModal({type:'section',sectionId:'${section.id}'},'notes')">📝</button>
           <button class="sec-icon-btn sec-attach-btn${hasAttach?' has-items':''}" title="Section attachments"
@@ -984,6 +986,26 @@ function deleteSection(sectionId){
   if(!confirm(`Remove "${section.label}" and all its items?`)) return;
   appData.sections=appData.sections.filter(s=>s.id!==sectionId);
   renderSections(); renderSummary(); scheduleSave();
+}
+
+function moveSection(sectionId, direction){
+  // Only reorder among sections visible in the current tab, then splice back into the full array
+  const visibleIds = appData.sections.filter(s=>s.project===currentTab).map(s=>s.id);
+  const visIdx = visibleIds.indexOf(sectionId);
+  const targetVisIdx = visIdx + direction;
+  if(targetVisIdx < 0 || targetVisIdx >= visibleIds.length) return; // already at edge
+
+  const otherId = visibleIds[targetVisIdx];
+  const fullIdxA = appData.sections.findIndex(s=>s.id===sectionId);
+  const fullIdxB = appData.sections.findIndex(s=>s.id===otherId);
+  if(fullIdxA===-1||fullIdxB===-1) return;
+
+  const tmp = appData.sections[fullIdxA];
+  appData.sections[fullIdxA] = appData.sections[fullIdxB];
+  appData.sections[fullIdxB] = tmp;
+
+  renderSections();
+  scheduleSave();
 }
 
 function renameSection(sectionId,value){ const section=appData.sections.find(s=>s.id===sectionId); if(section) section.label=value; scheduleSave(); }
