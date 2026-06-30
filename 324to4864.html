@@ -99,7 +99,8 @@
   .sec-del-btn{width:24px;height:24px;border-radius:50%;background:none;border:none;cursor:pointer;font-size:0.8rem;color:var(--muted);display:flex;align-items:center;justify-content:center;transition:all 0.15s;opacity:0.4;}
   .section-card:hover .sec-del-btn{opacity:1;}
   .sec-del-btn:hover{background:var(--red-lt);color:var(--red);}
-  .section-chevron{font-size:0.75rem;color:var(--muted);transition:transform 0.2s;margin-left:2px;cursor:pointer;}
+  .section-chevron{width:26px;height:26px;border-radius:50%;background:var(--cream);border:1px solid var(--border);color:var(--navy);font-size:1.1rem;font-weight:700;display:flex;align-items:center;justify-content:center;transition:transform 0.2s,background 0.15s;cursor:pointer;flex-shrink:0;}
+  .section-chevron:hover{background:var(--border);}
   .section-chevron.open{transform:rotate(180deg);}
   .section-body{border-top:1px solid var(--border);}
 
@@ -196,6 +197,8 @@
   .note-entry-body{flex:1;}
   .note-entry-meta{font-size:0.7rem;color:var(--muted);margin-bottom:3px;}
   .note-entry-text{font-size:0.88rem;color:var(--text);line-height:1.45;white-space:pre-wrap;}
+  .note-link{display:inline-block;margin-top:5px;font-size:0.8rem;color:var(--il-accent);text-decoration:none;word-break:break-all;}
+  .note-link:hover{text-decoration:underline;}
   .note-del-btn{width:20px;height:20px;border-radius:50%;background:none;border:none;cursor:pointer;font-size:0.72rem;color:var(--muted);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;opacity:0.4;transition:all 0.15s;}
   .note-entry:hover .note-del-btn{opacity:1;}
   .note-del-btn:hover{background:var(--red-lt);color:var(--red);}
@@ -334,10 +337,14 @@
     <!-- Notes tab -->
     <div class="modal-tab-content active" id="tab-notes">
       <div class="notes-list" id="modal-notes-list"></div>
-      <div class="modal-add-row">
+      <div class="modal-add-row" style="flex-direction:column;align-items:stretch;">
         <textarea id="modal-note-input" placeholder="Add a note… (Enter to submit, Shift+Enter for new line)"
           onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();submitModalNote();}"></textarea>
-        <button class="btn-add-modal" onclick="submitModalNote()">Add</button>
+        <div style="display:flex;gap:8px;margin-top:8px;">
+          <input type="url" id="modal-note-url" placeholder="Optional link (https://…)" style="flex:1;border:1.5px solid var(--border);border-radius:8px;padding:8px 10px;font-size:0.82rem;font-family:inherit;outline:none;transition:border-color 0.2s;"
+            onkeydown="if(event.key==='Enter'){event.preventDefault();submitModalNote();}"/>
+          <button class="btn-add-modal" onclick="submitModalNote()">Add</button>
+        </div>
       </div>
     </div>
     <!-- Attachments tab -->
@@ -514,6 +521,7 @@ function renderModalNotes(){
       <div class="note-entry-body">
         <div class="note-entry-meta">${fmtDT(n.ts)} · ${escHtml(n.user)}</div>
         <div class="note-entry-text">${escHtml(n.text)}</div>
+        ${n.url?`<a class="note-link" href="${escHtml(n.url)}" target="_blank" rel="noopener">🔗 ${escHtml(n.url)}</a>`:''}
       </div>
       <button class="note-del-btn" onclick="deleteModalNote('${n.id}')">✕</button>
     </div>`).join('');
@@ -521,10 +529,14 @@ function renderModalNotes(){
 function submitModalNote(){
   if(!modalContext) return;
   const el=document.getElementById('modal-note-input');
-  const text=el.value.trim(); if(!text) return;
+  const urlEl=document.getElementById('modal-note-url');
+  const text=el.value.trim();
+  let url=urlEl.value.trim();
+  if(!text && !url) return;
+  if(url && !/^https?:\/\//i.test(url)) url='https://'+url;
   const {notesArr}=getContextData(modalContext);
-  notesArr.push({id:uid(),ts:Date.now(),user:currentUser,text});
-  el.value='';
+  notesArr.push({id:uid(),ts:Date.now(),user:currentUser,text:text||'(link)',url:url||null});
+  el.value=''; urlEl.value='';
   renderModalNotes();
   updateContextBadges();
   scheduleSave();
@@ -777,14 +789,14 @@ function renderSection(section){
           <div class="section-total-group"><div class="stg-label">Diff</div><div class="stg-val ${dCls}">${dText}</div></div>
         </div>
         <div class="section-actions">
-          <button class="sec-icon-btn sec-move-btn" title="Move section up" onclick="moveSection('${section.id}',-1)">▲</button>
-          <button class="sec-icon-btn sec-move-btn" title="Move section down" onclick="moveSection('${section.id}',1)">▼</button>
+          <button class="sec-icon-btn sec-move-btn" title="Move section up" onclick="moveSection('${section.id}',-1)">⬆</button>
+          <button class="sec-icon-btn sec-move-btn" title="Move section down" onclick="moveSection('${section.id}',1)">⬇</button>
           <button class="sec-icon-btn sec-notes-btn${hasNotes?' has-items':''}" title="Section notes"
             onclick="openModal({type:'section',sectionId:'${section.id}'},'notes')">📝</button>
           <button class="sec-icon-btn sec-attach-btn${hasAttach?' has-items':''}" title="Section attachments"
             onclick="openModal({type:'section',sectionId:'${section.id}'},'attach')">📎</button>
           <button class="sec-del-btn" onclick="deleteSection('${section.id}')" title="Remove section">✕</button>
-          <span class="section-chevron open" onclick="toggleSection('${section.id}')">▼</span>
+          <span class="section-chevron open" onclick="toggleSection('${section.id}')" title="Expand/collapse">⌄</span>
         </div>
       </div>
     </div>
