@@ -351,6 +351,42 @@
       <div class="summary-card row-actual"><div class="label">Actual Expenses</div><div class="amount" id="sum-actual-expenses">$0</div></div>
       <div class="summary-card remaining-actual"><div class="label">Remaining Balance</div><div class="amount" id="sum-actual-remaining">$0</div></div>
     </div>
+
+    <!-- Per-tab breakdown -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:4px;">
+      <!-- IL -->
+      <div style="background:var(--white);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;">
+        <div style="background:var(--il-accent);color:var(--white);padding:8px 14px;font-size:0.75rem;font-weight:700;letter-spacing:0.05em;text-transform:uppercase;">&#127969; IL (324) — Sale</div>
+        <div style="padding:10px 14px;display:grid;grid-template-columns:1fr 1fr;gap:6px;">
+          <div><div style="font-size:0.65rem;text-transform:uppercase;letter-spacing:0.05em;color:var(--muted);margin-bottom:3px;">Budget Income</div><div style="font-size:0.95rem;font-weight:700;color:var(--green);" id="il-budget-income">$0</div></div>
+          <div><div style="font-size:0.65rem;text-transform:uppercase;letter-spacing:0.05em;color:var(--muted);margin-bottom:3px;">Budget Expenses</div><div style="font-size:0.95rem;font-weight:700;color:var(--navy);" id="il-budget-expenses">$0</div></div>
+          <div><div style="font-size:0.65rem;text-transform:uppercase;letter-spacing:0.05em;color:var(--muted);margin-bottom:3px;">Actual Income</div><div style="font-size:0.95rem;font-weight:700;color:var(--green);" id="il-actual-income">$0</div></div>
+          <div><div style="font-size:0.65rem;text-transform:uppercase;letter-spacing:0.05em;color:var(--muted);margin-bottom:3px;">Actual Expenses</div><div style="font-size:0.95rem;font-weight:700;color:var(--navy);" id="il-actual-expenses">$0</div></div>
+          <div style="grid-column:span 2;border-top:1px solid var(--border);padding-top:6px;margin-top:2px;">
+            <div style="display:flex;justify-content:space-between;align-items:center;">
+              <div><div style="font-size:0.65rem;text-transform:uppercase;letter-spacing:0.05em;color:var(--muted);margin-bottom:3px;">Budget Net</div><div style="font-size:0.95rem;font-weight:700;" id="il-budget-net">$0</div></div>
+              <div style="text-align:right;"><div style="font-size:0.65rem;text-transform:uppercase;letter-spacing:0.05em;color:var(--muted);margin-bottom:3px;">Actual Net</div><div style="font-size:0.95rem;font-weight:700;" id="il-actual-net">$0</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- FL -->
+      <div style="background:var(--white);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;">
+        <div style="background:var(--fl-accent);color:var(--white);padding:8px 14px;font-size:0.75rem;font-weight:700;letter-spacing:0.05em;text-transform:uppercase;">&#127796; FL (4864) — Remodel</div>
+        <div style="padding:10px 14px;display:grid;grid-template-columns:1fr 1fr;gap:6px;">
+          <div><div style="font-size:0.65rem;text-transform:uppercase;letter-spacing:0.05em;color:var(--muted);margin-bottom:3px;">Budget Income</div><div style="font-size:0.95rem;font-weight:700;color:var(--green);" id="fl-budget-income">$0</div></div>
+          <div><div style="font-size:0.65rem;text-transform:uppercase;letter-spacing:0.05em;color:var(--muted);margin-bottom:3px;">Budget Expenses</div><div style="font-size:0.95rem;font-weight:700;color:var(--navy);" id="fl-budget-expenses">$0</div></div>
+          <div><div style="font-size:0.65rem;text-transform:uppercase;letter-spacing:0.05em;color:var(--muted);margin-bottom:3px;">Actual Income</div><div style="font-size:0.95rem;font-weight:700;color:var(--green);" id="fl-actual-income">$0</div></div>
+          <div><div style="font-size:0.65rem;text-transform:uppercase;letter-spacing:0.05em;color:var(--muted);margin-bottom:3px;">Actual Expenses</div><div style="font-size:0.95rem;font-weight:700;color:var(--navy);" id="fl-actual-expenses">$0</div></div>
+          <div style="grid-column:span 2;border-top:1px solid var(--border);padding-top:6px;margin-top:2px;">
+            <div style="display:flex;justify-content:space-between;align-items:center;">
+              <div><div style="font-size:0.65rem;text-transform:uppercase;letter-spacing:0.05em;color:var(--muted);margin-bottom:3px;">Budget Net</div><div style="font-size:0.95rem;font-weight:700;" id="fl-budget-net">$0</div></div>
+              <div style="text-align:right;"><div style="font-size:0.65rem;text-transform:uppercase;letter-spacing:0.05em;color:var(--muted);margin-bottom:3px;">Actual Net</div><div style="font-size:0.95rem;font-weight:700;" id="fl-actual-net">$0</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 
   <div class="status-banner" id="status-banner"></div>
@@ -722,11 +758,22 @@ function subtotalsHTML(ss){
 
 function renderSummary(){
   let bi=0,be=0,ai=0,ae=0;
+  let ilBi=0,ilBe=0,ilAi=0,ilAe=0;
+  let flBi=0,flBe=0,flAi=0,flAe=0;
   appData.sections.forEach(s=>{
     const{budgetTotal,actualTotal}=subsectionTotals(s);
     if(s.type==='income'){bi+=budgetTotal;ai+=actualTotal;}else{be+=budgetTotal;ae+=actualTotal;}
+    if(s.project==='il'){
+      if(s.type==='income'){ilBi+=budgetTotal;ilAi+=actualTotal;}else{ilBe+=budgetTotal;ilAe+=actualTotal;}
+    } else {
+      if(s.type==='income'){flBi+=budgetTotal;flAi+=actualTotal;}else{flBe+=budgetTotal;flAe+=actualTotal;}
+    }
   });
   const br=bi-be,ar=ai-ae;
+  const ilBn=ilBi-ilBe,ilAn=ilAi-ilAe;
+  const flBn=flBi-flBe,flAn=flAi-flAe;
+
+  // Overall
   document.getElementById('sum-budget-income').textContent=fmt(bi);
   document.getElementById('sum-budget-expenses').textContent=fmt(be);
   document.getElementById('sum-budget-remaining').textContent=fmt(br);
@@ -735,6 +782,27 @@ function renderSummary(){
   document.getElementById('sum-actual-expenses').textContent=fmt(ae);
   document.getElementById('sum-actual-remaining').textContent=fmt(ar);
   document.getElementById('sum-actual-remaining').style.color=ar<0?'var(--red)':'var(--green)';
+
+  // IL breakdown
+  document.getElementById('il-budget-income').textContent=fmt(ilBi);
+  document.getElementById('il-budget-expenses').textContent=fmt(ilBe);
+  document.getElementById('il-actual-income').textContent=fmt(ilAi);
+  document.getElementById('il-actual-expenses').textContent=fmt(ilAe);
+  const ilBnEl=document.getElementById('il-budget-net');
+  ilBnEl.textContent=fmt(ilBn); ilBnEl.style.color=ilBn<0?'var(--red)':'var(--green)';
+  const ilAnEl=document.getElementById('il-actual-net');
+  ilAnEl.textContent=fmt(ilAn); ilAnEl.style.color=ilAn<0?'var(--red)':'var(--green)';
+
+  // FL breakdown
+  document.getElementById('fl-budget-income').textContent=fmt(flBi);
+  document.getElementById('fl-budget-expenses').textContent=fmt(flBe);
+  document.getElementById('fl-actual-income').textContent=fmt(flAi);
+  document.getElementById('fl-actual-expenses').textContent=fmt(flAe);
+  const flBnEl=document.getElementById('fl-budget-net');
+  flBnEl.textContent=fmt(flBn); flBnEl.style.color=flBn<0?'var(--red)':'var(--green)';
+  const flAnEl=document.getElementById('fl-actual-net');
+  flAnEl.textContent=fmt(flAn); flAnEl.style.color=flAn<0?'var(--red)':'var(--green)';
+
   const banner=document.getElementById('status-banner');
   if(bi===0&&ai===0){banner.className='status-banner';return;}
   if(ar<0){banner.className='status-banner overspend';banner.textContent=`⚠ Actual spending exceeds actual income by ${fmt(Math.abs(ar))}.`;}
