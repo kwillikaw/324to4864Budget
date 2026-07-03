@@ -460,9 +460,9 @@
 </div>
 
 <script>
-const BIN_ID      = '6a403239f5f4af5e293a4ee5';
-const API_KEY     = '$2a$10$ZWfSme4o.C02NReQvgEwvuLzrMR13IVO6CBkp2fMj3naMSn5NBCKm';
 const SESSION_KEY = 'willis_budget_session';
+const FB_DB_URL = 'https://to4864-7e8e7-default-rtdb.firebaseio.com';
+const FB_DATA_PATH = '/budgetData.json';
 const USERS = { KW:'table5', MW:'table5' };
 const GDRIVE_CLIENT_ID = '211325225077-e9eljjv462172tcqmpk3j25dg1kfgd6h.apps.googleusercontent.com';
 const GDRIVE_FOLDER_ID = '1CNq8fXmJBz2SoZUyPSE1VS9mkgMVLP8B';
@@ -496,11 +496,11 @@ function checkPassword(){
     document.getElementById('app-screen').style.display='block';
     document.getElementById('user-badge').textContent='👤 '+currentUser;
     showLoading(true);
-    loadData().finally(()=>showLoading(false));
+    loadData().finally(()=>{showLoading(false);startAutoRefresh();});
   }else{showPwdError('Incorrect password.');document.getElementById('pwd-input').value='';document.getElementById('pwd-input').focus();}
 }
 function showPwdError(msg){const e=document.getElementById('pwd-error');e.textContent=msg;e.style.display='block';}
-function signOut(){sessionStorage.removeItem(SESSION_KEY);currentUser=null;selectedUser=null;document.getElementById('password-screen').style.display='flex';document.getElementById('main-header').style.display='none';document.getElementById('app-screen').style.display='none';document.getElementById('pwd-input').value='';document.getElementById('pwd-error').style.display='none';document.querySelectorAll('.user-btn').forEach(b=>b.classList.remove('selected'));}
+function signOut(){stopAutoRefresh();sessionStorage.removeItem(SESSION_KEY);currentUser=null;selectedUser=null;document.getElementById('password-screen').style.display='flex';document.getElementById('main-header').style.display='none';document.getElementById('app-screen').style.display='none';document.getElementById('pwd-input').value='';document.getElementById('pwd-error').style.display='none';document.querySelectorAll('.user-btn').forEach(b=>b.classList.remove('selected'));}
 
 // DATA
 function makeItem(name){return {id:uid(),name,budget:0,actual:0,budgetHistory:[],actualHistory:[],notes:[],attachments:[]};}
@@ -560,32 +560,63 @@ function migrateData(data){
   return data;
 }
 
-// JSONBIN
-async function apiFetch(method,body=null){
-  const url=`https://api.jsonbin.io/v3/b/${BIN_ID}`;
-  const headers={'X-Master-Key':API_KEY,'Content-Type':'application/json'};
-  const opts={method,headers};if(body)opts.body=JSON.stringify(body);
-  const res=await fetch(url,opts);
-  if(!res.ok){const e=await res.json().catch(()=>({message:'Unknown error'}));throw new Error(e.message||`HTTP ${res.status}`);}
+// FIREBASE REALTIME DATABASE
+async function fbRead(){
+  const res=await fetch(FB_DB_URL+FB_DATA_PATH);
+  if(!res.ok) throw new Error('Firebase read error: '+res.status);
+  return res.json(); // returns null if no data yet
+}
+async function fbWrite(data){
+  const res=await fetch(FB_DB_URL+FB_DATA_PATH,{
+    method:'PUT',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify(data)
+  });
+  if(!res.ok) throw new Error('Firebase write error: '+res.status);
   return res.json();
 }
 async function loadData(){
   setSyncBadge('','● Syncing…');
   try{
-    const resp=await apiFetch('GET');const record=resp.record;
+    const record=await fbRead();
     if(record&&(record.sections||record.sectionGroups)){appData=migrateData(record);}
-    else{await apiFetch('PUT',appData);}
+    else{await fbWrite(appData);}
     renderAll();setSyncBadge('synced','● Synced');lastSaved=new Date();updateLastSaved();
   }catch(e){setSyncBadge('error','● Sync error');showToast('⚠ Could not load: '+e.message,4000);}
 }
 async function saveData(){
   setSyncBadge('','● Saving…');
   try{
-    collectFromDOM();await apiFetch('PUT',appData);
+    collectFromDOM();appData._lastSaved=Date.now();await fbWrite(appData);
     setSyncBadge('synced','● Saved ✓');lastSaved=new Date();updateLastSaved();showToast('✓ Saved & synced');
   }catch(e){setSyncBadge('error','● Save failed');showToast('⚠ Save failed: '+e.message,4000);}
 }
 function scheduleSave(){clearTimeout(saveTimer);saveTimer=setTimeout(saveData,3000);}
+
+// Auto-refresh every 30 seconds to pick up changes from other devices
+let refreshTimer=null;
+function startAutoRefresh(){
+  stopAutoRefresh();
+  refreshTimer=setInterval(async()=>{
+    // Only refresh if not currently saving and no unsaved changes pending
+    if(saveTimer) return;
+    try{
+      const record=await fbRead();
+      if(!record) return;
+      // Compare timestamps to see if remote is newer
+      const remoteTs=record._lastSaved||0;
+      const localTs=lastSaved?lastSaved.getTime():0;
+      if(remoteTs>localTs+2000){ // remote is more than 2 seconds newer
+        appData=migrateData(record);
+        renderAll();
+        lastSaved=new Date(remoteTs);updateLastSaved();
+        setSyncBadge('synced','● Updated');
+        showToast('↓ Changes from other device loaded',2500);
+      }
+    }catch(e){ /* silent fail on background refresh */ }
+  },30000);
+}
+function stopAutoRefresh(){ if(refreshTimer){clearInterval(refreshTimer);refreshTimer=null;} }
 function updateLastSaved(){if(!lastSaved)return;document.getElementById('last-saved').textContent='Last saved: '+lastSaved.toLocaleTimeString();}
 
 // DIFF
@@ -1230,7 +1261,7 @@ function updateContextBadges(){
         document.getElementById('app-screen').style.display='block';
         document.getElementById('user-badge').textContent='👤 '+currentUser;
         showLoading(true);
-        loadData().finally(()=>showLoading(false));
+        loadData().finally(()=>{showLoading(false);startAutoRefresh();});
         return;
       }
     }catch(e){}
