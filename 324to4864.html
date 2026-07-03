@@ -622,7 +622,7 @@ function getContextTitle(ctx){
 }
 
 // RENDER
-function setTab(tab){currentTab=tab;document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));document.querySelector('.tab-btn.'+tab).classList.add('active');renderAll();}
+function setTab(tab){currentTab=tab;document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));document.querySelector('.tab-btn.'+tab).classList.add('active');collapseState.groups.clear();collapseState.subsections.clear();renderAll();}
 function renderAll(){renderSections();renderSummary();}
 
 function renderSections(){
@@ -637,6 +637,7 @@ function renderSections(){
     <input type="text" id="new-group-name" placeholder="Section name (e.g. 1st Floor)"/>
     <button class="btn-add-sec" onclick="addGroup()">Add Section</button>
   </div>`;
+  applyCollapseState();
 }
 
 function renderGroup(group){
@@ -845,6 +846,9 @@ function renderSummary(){
 }
 
 // TOGGLE
+// Persist collapsed state across re-renders
+const collapseState = { groups: new Set(), subsections: new Set() };
+
 function toggleGroup(id){
   const el=document.querySelector(`[data-group-id="${id}"]`);if(!el)return;
   el.classList.toggle('collapsed');
@@ -852,11 +856,28 @@ function toggleGroup(id){
   const header=document.getElementById('gh-'+id);
   if(chev)chev.classList.toggle('open');
   if(header)header.classList.toggle('group-collapsed');
+  if(collapseState.groups.has(id)) collapseState.groups.delete(id);
+  else collapseState.groups.add(id);
 }
 function toggleSubsection(id){
   const el=document.querySelector(`[data-subsection-id="${id}"]`);if(!el)return;
   el.classList.toggle('collapsed');
   const chev=document.getElementById('ssc-'+id);if(chev)chev.classList.toggle('open');
+  if(collapseState.subsections.has(id)) collapseState.subsections.delete(id);
+  else collapseState.subsections.add(id);
+}
+function applyCollapseState(){
+  collapseState.groups.forEach(id=>{
+    const el=document.querySelector(`[data-group-id="${id}"]`);if(!el)return;
+    el.classList.add('collapsed');
+    const chev=document.getElementById('sgc-'+id);if(chev)chev.classList.remove('open');
+    const header=document.getElementById('gh-'+id);if(header)header.classList.add('group-collapsed');
+  });
+  collapseState.subsections.forEach(id=>{
+    const el=document.querySelector(`[data-subsection-id="${id}"]`);if(!el)return;
+    el.classList.add('collapsed');
+    const chev=document.getElementById('ssc-'+id);if(chev)chev.classList.remove('open');
+  });
 }
 
 // GROUPS CRUD
@@ -873,6 +894,7 @@ function deleteGroup(groupId){
   const fallback=appData.sectionGroups.find(g=>g.project===currentTab&&g.id!==groupId);
   appData.sections.forEach(s=>{if(s.sectionGroupId===groupId)s.sectionGroupId=fallback?fallback.id:'';});
   appData.sectionGroups=appData.sectionGroups.filter(g=>g.id!==groupId);
+  collapseState.groups.delete(groupId);
   renderSections();renderSummary();scheduleSave();
 }
 function renameGroup(groupId,value){const g=appData.sectionGroups.find(x=>x.id===groupId);if(g)g.label=value;scheduleSave();}
@@ -899,6 +921,7 @@ function deleteSubsection(ssId){
   const ss=appData.sections.find(s=>s.id===ssId);if(!ss)return;
   if(!confirm(`Delete "${ss.label}" and all its items?`))return;
   appData.sections=appData.sections.filter(s=>s.id!==ssId);
+  collapseState.subsections.delete(ssId);
   renderSections();renderSummary();scheduleSave();
 }
 function renameSubsection(ssId,value){const ss=appData.sections.find(s=>s.id===ssId);if(ss)ss.label=value;scheduleSave();}
