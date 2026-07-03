@@ -846,34 +846,55 @@ function renderSummary(){
 }
 
 // TOGGLE
-// Persist collapsed state across re-renders
-const collapseState = { groups: new Set(), subsections: new Set() };
+// Persist collapsed state across re-renders and page refreshes
+const COLLAPSE_KEY = 'willis_collapse_state';
+function loadCollapseState(){
+  try{ const s=sessionStorage.getItem(COLLAPSE_KEY); return s?JSON.parse(s):{groups:[],subsections:[]}; }
+  catch(e){ return {groups:[],subsections:[]}; }
+}
+function saveCollapseState(){
+  const state=loadCollapseState();
+  sessionStorage.setItem(COLLAPSE_KEY,JSON.stringify(state));
+}
+function isGroupCollapsed(id){ return loadCollapseState().groups.includes(id); }
+function isSubCollapsed(id){ return loadCollapseState().subsections.includes(id); }
+function setGroupCollapsed(id,collapsed){
+  const state=loadCollapseState();
+  state.groups=state.groups.filter(x=>x!==id);
+  if(collapsed) state.groups.push(id);
+  sessionStorage.setItem(COLLAPSE_KEY,JSON.stringify(state));
+}
+function setSubCollapsed(id,collapsed){
+  const state=loadCollapseState();
+  state.subsections=state.subsections.filter(x=>x!==id);
+  if(collapsed) state.subsections.push(id);
+  sessionStorage.setItem(COLLAPSE_KEY,JSON.stringify(state));
+}
 
 function toggleGroup(id){
+  const collapsed=!isGroupCollapsed(id);
+  setGroupCollapsed(id,collapsed);
   const el=document.querySelector(`[data-group-id="${id}"]`);if(!el)return;
-  el.classList.toggle('collapsed');
-  const chev=document.getElementById('sgc-'+id);
-  const header=document.getElementById('gh-'+id);
-  if(chev)chev.classList.toggle('open');
-  if(header)header.classList.toggle('group-collapsed');
-  if(collapseState.groups.has(id)) collapseState.groups.delete(id);
-  else collapseState.groups.add(id);
+  el.classList.toggle('collapsed',collapsed);
+  const chev=document.getElementById('sgc-'+id);if(chev)chev.classList.toggle('open',!collapsed);
+  const header=document.getElementById('gh-'+id);if(header)header.classList.toggle('group-collapsed',collapsed);
 }
 function toggleSubsection(id){
+  const collapsed=!isSubCollapsed(id);
+  setSubCollapsed(id,collapsed);
   const el=document.querySelector(`[data-subsection-id="${id}"]`);if(!el)return;
-  el.classList.toggle('collapsed');
-  const chev=document.getElementById('ssc-'+id);if(chev)chev.classList.toggle('open');
-  if(collapseState.subsections.has(id)) collapseState.subsections.delete(id);
-  else collapseState.subsections.add(id);
+  el.classList.toggle('collapsed',collapsed);
+  const chev=document.getElementById('ssc-'+id);if(chev)chev.classList.toggle('open',!collapsed);
 }
 function applyCollapseState(){
-  collapseState.groups.forEach(id=>{
+  const state=loadCollapseState();
+  state.groups.forEach(id=>{
     const el=document.querySelector(`[data-group-id="${id}"]`);if(!el)return;
     el.classList.add('collapsed');
     const chev=document.getElementById('sgc-'+id);if(chev)chev.classList.remove('open');
     const header=document.getElementById('gh-'+id);if(header)header.classList.add('group-collapsed');
   });
-  collapseState.subsections.forEach(id=>{
+  state.subsections.forEach(id=>{
     const el=document.querySelector(`[data-subsection-id="${id}"]`);if(!el)return;
     el.classList.add('collapsed');
     const chev=document.getElementById('ssc-'+id);if(chev)chev.classList.remove('open');
@@ -894,7 +915,7 @@ function deleteGroup(groupId){
   const fallback=appData.sectionGroups.find(g=>g.project===currentTab&&g.id!==groupId);
   appData.sections.forEach(s=>{if(s.sectionGroupId===groupId)s.sectionGroupId=fallback?fallback.id:'';});
   appData.sectionGroups=appData.sectionGroups.filter(g=>g.id!==groupId);
-  collapseState.groups.delete(groupId);
+  setGroupCollapsed(groupId,false);
   renderSections();renderSummary();scheduleSave();
 }
 function renameGroup(groupId,value){const g=appData.sectionGroups.find(x=>x.id===groupId);if(g)g.label=value;scheduleSave();}
@@ -921,7 +942,7 @@ function deleteSubsection(ssId){
   const ss=appData.sections.find(s=>s.id===ssId);if(!ss)return;
   if(!confirm(`Delete "${ss.label}" and all its items?`))return;
   appData.sections=appData.sections.filter(s=>s.id!==ssId);
-  collapseState.subsections.delete(ssId);
+  setSubCollapsed(ssId,false);
   renderSections();renderSummary();scheduleSave();
 }
 function renameSubsection(ssId,value){const ss=appData.sections.find(s=>s.id===ssId);if(ss)ss.label=value;scheduleSave();}
