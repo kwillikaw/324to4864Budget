@@ -135,7 +135,9 @@
   .subsection-card.collapsed .subsection-body{display:none;}
 
   /* MOVE DROPDOWN */
-  .move-select{border:1.5px solid var(--border);border-radius:6px;padding:3px 6px;font-size:0.76rem;font-family:inherit;outline:none;background:var(--white);cursor:pointer;max-width:110px;}
+  .move-select,.assignee-select{border:1.5px solid var(--border);border-radius:6px;padding:3px 6px;font-size:0.76rem;font-family:inherit;outline:none;background:var(--white);cursor:pointer;}
+  .move-select{max-width:110px;}
+  .assignee-select{max-width:60px;font-weight:700;color:var(--navy);}
 
   /* BADGE */
   .badge-wrap{position:relative;display:inline-flex;}
@@ -387,6 +389,58 @@
         </div>
       </div>
     </div>
+    <!-- KW / MW expense breakdown -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px;">
+      <!-- KW -->
+      <div style="background:var(--white);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;">
+        <div style="background:var(--navy);color:var(--white);padding:8px 14px;font-size:0.75rem;font-weight:700;letter-spacing:0.05em;text-transform:uppercase;">&#128100; KW Expenses</div>
+        <div style="padding:10px 14px;display:grid;grid-template-columns:1fr 1fr;gap:6px;">
+          <div><div style="font-size:0.65rem;text-transform:uppercase;letter-spacing:0.05em;color:var(--muted);margin-bottom:3px;">Budgeted</div><div style="font-size:0.95rem;font-weight:700;color:var(--navy);" id="kw-budget-expenses">$0</div></div>
+          <div><div style="font-size:0.65rem;text-transform:uppercase;letter-spacing:0.05em;color:var(--muted);margin-bottom:3px;">Actual</div><div style="font-size:0.95rem;font-weight:700;color:var(--navy);" id="kw-actual-expenses">$0</div></div>
+        </div>
+      </div>
+      <!-- MW -->
+      <div style="background:var(--white);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;">
+        <div style="background:var(--slate);color:var(--white);padding:8px 14px;font-size:0.75rem;font-weight:700;letter-spacing:0.05em;text-transform:uppercase;">&#128100; MW Expenses</div>
+        <div style="padding:10px 14px;display:grid;grid-template-columns:1fr 1fr;gap:6px;">
+          <div><div style="font-size:0.65rem;text-transform:uppercase;letter-spacing:0.05em;color:var(--muted);margin-bottom:3px;">Budgeted</div><div style="font-size:0.95rem;font-weight:700;color:var(--navy);" id="mw-budget-expenses">$0</div></div>
+          <div><div style="font-size:0.65rem;text-transform:uppercase;letter-spacing:0.05em;color:var(--muted);margin-bottom:3px;">Actual</div><div style="font-size:0.95rem;font-weight:700;color:var(--navy);" id="mw-actual-expenses">$0</div></div>
+        </div>
+      </div>
+    </div>
+      <!-- IL -->
+      <div style="background:var(--white);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;">
+        <div style="background:var(--il-accent);color:var(--white);padding:8px 14px;font-size:0.75rem;font-weight:700;letter-spacing:0.05em;text-transform:uppercase;">&#127969; IL (324) — Sale</div>
+        <div style="padding:10px 14px;display:grid;grid-template-columns:1fr 1fr;gap:6px;">
+          <div><div style="font-size:0.65rem;text-transform:uppercase;letter-spacing:0.05em;color:var(--muted);margin-bottom:3px;">Budget Income</div><div style="font-size:0.95rem;font-weight:700;color:var(--green);" id="il-budget-income">$0</div></div>
+          <div><div style="font-size:0.65rem;text-transform:uppercase;letter-spacing:0.05em;color:var(--muted);margin-bottom:3px;">Budget Expenses</div><div style="font-size:0.95rem;font-weight:700;color:var(--navy);" id="il-budget-expenses">$0</div></div>
+          <div><div style="font-size:0.65rem;text-transform:uppercase;letter-spacing:0.05em;color:var(--muted);margin-bottom:3px;">Actual Income</div><div style="font-size:0.95rem;font-weight:700;color:var(--green);" id="il-actual-income">$0</div></div>
+          <div><div style="font-size:0.65rem;text-transform:uppercase;letter-spacing:0.05em;color:var(--muted);margin-bottom:3px;">Actual Expenses</div><div style="font-size:0.95rem;font-weight:700;color:var(--navy);" id="il-actual-expenses">$0</div></div>
+          <div style="grid-column:span 2;border-top:1px solid var(--border);padding-top:6px;margin-top:2px;">
+            <div style="display:flex;justify-content:space-between;align-items:center;">
+              <div><div style="font-size:0.65rem;text-transform:uppercase;letter-spacing:0.05em;color:var(--muted);margin-bottom:3px;">Budget Net</div><div style="font-size:0.95rem;font-weight:700;" id="il-budget-net">$0</div></div>
+              <div style="text-align:right;"><div style="font-size:0.65rem;text-transform:uppercase;letter-spacing:0.05em;color:var(--muted);margin-bottom:3px;">Actual Net</div><div style="font-size:0.95rem;font-weight:700;" id="il-actual-net">$0</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- FL -->
+      <div style="background:var(--white);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;">
+        <div style="background:var(--fl-accent);color:var(--white);padding:8px 14px;font-size:0.75rem;font-weight:700;letter-spacing:0.05em;text-transform:uppercase;">&#127796; FL (4864) — Remodel</div>
+        <div style="padding:10px 14px;display:grid;grid-template-columns:1fr 1fr;gap:6px;">
+          <div><div style="font-size:0.65rem;text-transform:uppercase;letter-spacing:0.05em;color:var(--muted);margin-bottom:3px;">Budget Income</div><div style="font-size:0.95rem;font-weight:700;color:var(--green);" id="fl-budget-income">$0</div></div>
+          <div><div style="font-size:0.65rem;text-transform:uppercase;letter-spacing:0.05em;color:var(--muted);margin-bottom:3px;">Budget Expenses</div><div style="font-size:0.95rem;font-weight:700;color:var(--navy);" id="fl-budget-expenses">$0</div></div>
+          <div><div style="font-size:0.65rem;text-transform:uppercase;letter-spacing:0.05em;color:var(--muted);margin-bottom:3px;">Actual Income</div><div style="font-size:0.95rem;font-weight:700;color:var(--green);" id="fl-actual-income">$0</div></div>
+          <div><div style="font-size:0.65rem;text-transform:uppercase;letter-spacing:0.05em;color:var(--muted);margin-bottom:3px;">Actual Expenses</div><div style="font-size:0.95rem;font-weight:700;color:var(--navy);" id="fl-actual-expenses">$0</div></div>
+          <div style="grid-column:span 2;border-top:1px solid var(--border);padding-top:6px;margin-top:2px;">
+            <div style="display:flex;justify-content:space-between;align-items:center;">
+              <div><div style="font-size:0.65rem;text-transform:uppercase;letter-spacing:0.05em;color:var(--muted);margin-bottom:3px;">Budget Net</div><div style="font-size:0.95rem;font-weight:700;" id="fl-budget-net">$0</div></div>
+              <div style="text-align:right;"><div style="font-size:0.65rem;text-transform:uppercase;letter-spacing:0.05em;color:var(--muted);margin-bottom:3px;">Actual Net</div><div style="font-size:0.95rem;font-weight:700;" id="fl-actual-net">$0</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 
   <div class="status-banner" id="status-banner"></div>
@@ -482,7 +536,7 @@ function signOut(){sessionStorage.removeItem(SESSION_KEY);currentUser=null;selec
 
 // DATA
 function makeItem(name){return {id:uid(),name,budget:0,actual:0,budgetHistory:[],actualHistory:[],notes:[],attachments:[]};}
-function makeSubsection(label,project,type,groupId){return {id:uid(),label,project,type,sectionGroupId:groupId,items:[],notes:[],attachments:[]};}
+function makeSubsection(label,project,type,groupId){return {id:uid(),label,project,type,sectionGroupId:groupId,assignee:'MW',items:[],notes:[],attachments:[]};}
 function makeSectionGroup(label,project){return {id:uid(),label,project,notes:[],attachments:[]};}
 
 const DEFAULT_DATA={
@@ -531,6 +585,7 @@ function migrateData(data){
       if(item.budget===undefined)item.budget=0;if(item.actual===undefined)item.actual=0;
       return item;
     });
+    if(!s.assignee) s.assignee='MW';
   });
   if(!data.notes||typeof data.notes==='string')data.notes=[];
   if(!data.attachments)data.attachments=[];
@@ -690,6 +745,10 @@ function renderSubsectionHTML(ss){
         </div>
         <div class="subsection-actions">
           ${moveOpts}
+          ${ss.type==='expense'?`<select class="assignee-select" title="Assigned to" onchange="assignSubsection('${ss.id}',this.value)">
+            <option value="MW"${(ss.assignee||'MW')==='MW'?' selected':''}>MW</option>
+            <option value="KW"${(ss.assignee||'MW')==='KW'?' selected':''}>KW</option>
+          </select>`:''}
           <button class="ss-btn" title="Move up" onclick="moveSubsectionOrder('${ss.id}',-1)">⬆</button>
           <button class="ss-btn" title="Move down" onclick="moveSubsectionOrder('${ss.id}',1)">⬇</button>
           <div class="badge-wrap"><button class="ss-btn${noteCount>0?' has-items':''}" title="Notes" onclick="openModal({type:'section',sectionId:'${ss.id}'},'notes')">📝</button>${noteCount>0?`<span class="badge-count">${noteCount}</span>`:''}</div>
@@ -760,6 +819,7 @@ function renderSummary(){
   let bi=0,be=0,ai=0,ae=0;
   let ilBi=0,ilBe=0,ilAi=0,ilAe=0;
   let flBi=0,flBe=0,flAi=0,flAe=0;
+  let kwBe=0,kwAe=0,mwBe=0,mwAe=0;
   appData.sections.forEach(s=>{
     const{budgetTotal,actualTotal}=subsectionTotals(s);
     if(s.type==='income'){bi+=budgetTotal;ai+=actualTotal;}else{be+=budgetTotal;ae+=actualTotal;}
@@ -768,12 +828,16 @@ function renderSummary(){
     } else {
       if(s.type==='income'){flBi+=budgetTotal;flAi+=actualTotal;}else{flBe+=budgetTotal;flAe+=actualTotal;}
     }
+    if(s.type==='expense'){
+      const assignee=s.assignee||'MW';
+      if(assignee==='KW'){kwBe+=budgetTotal;kwAe+=actualTotal;}
+      else{mwBe+=budgetTotal;mwAe+=actualTotal;}
+    }
   });
   const br=bi-be,ar=ai-ae;
   const ilBn=ilBi-ilBe,ilAn=ilAi-ilAe;
   const flBn=flBi-flBe,flAn=flAi-flAe;
 
-  // Overall
   document.getElementById('sum-budget-income').textContent=fmt(bi);
   document.getElementById('sum-budget-expenses').textContent=fmt(be);
   document.getElementById('sum-budget-remaining').textContent=fmt(br);
@@ -783,25 +847,28 @@ function renderSummary(){
   document.getElementById('sum-actual-remaining').textContent=fmt(ar);
   document.getElementById('sum-actual-remaining').style.color=ar<0?'var(--red)':'var(--green)';
 
-  // IL breakdown
   document.getElementById('il-budget-income').textContent=fmt(ilBi);
   document.getElementById('il-budget-expenses').textContent=fmt(ilBe);
   document.getElementById('il-actual-income').textContent=fmt(ilAi);
   document.getElementById('il-actual-expenses').textContent=fmt(ilAe);
   const ilBnEl=document.getElementById('il-budget-net');
-  ilBnEl.textContent=fmt(ilBn); ilBnEl.style.color=ilBn<0?'var(--red)':'var(--green)';
+  ilBnEl.textContent=fmt(ilBn);ilBnEl.style.color=ilBn<0?'var(--red)':'var(--green)';
   const ilAnEl=document.getElementById('il-actual-net');
-  ilAnEl.textContent=fmt(ilAn); ilAnEl.style.color=ilAn<0?'var(--red)':'var(--green)';
+  ilAnEl.textContent=fmt(ilAn);ilAnEl.style.color=ilAn<0?'var(--red)':'var(--green)';
 
-  // FL breakdown
   document.getElementById('fl-budget-income').textContent=fmt(flBi);
   document.getElementById('fl-budget-expenses').textContent=fmt(flBe);
   document.getElementById('fl-actual-income').textContent=fmt(flAi);
   document.getElementById('fl-actual-expenses').textContent=fmt(flAe);
   const flBnEl=document.getElementById('fl-budget-net');
-  flBnEl.textContent=fmt(flBn); flBnEl.style.color=flBn<0?'var(--red)':'var(--green)';
+  flBnEl.textContent=fmt(flBn);flBnEl.style.color=flBn<0?'var(--red)':'var(--green)';
   const flAnEl=document.getElementById('fl-actual-net');
-  flAnEl.textContent=fmt(flAn); flAnEl.style.color=flAn<0?'var(--red)':'var(--green)';
+  flAnEl.textContent=fmt(flAn);flAnEl.style.color=flAn<0?'var(--red)':'var(--green)';
+
+  document.getElementById('kw-budget-expenses').textContent=fmt(kwBe);
+  document.getElementById('kw-actual-expenses').textContent=fmt(kwAe);
+  document.getElementById('mw-budget-expenses').textContent=fmt(mwBe);
+  document.getElementById('mw-actual-expenses').textContent=fmt(mwAe);
 
   const banner=document.getElementById('status-banner');
   if(bi===0&&ai===0){banner.className='status-banner';return;}
@@ -867,6 +934,7 @@ function deleteSubsection(ssId){
   renderSections();renderSummary();scheduleSave();
 }
 function renameSubsection(ssId,value){const ss=appData.sections.find(s=>s.id===ssId);if(ss)ss.label=value;scheduleSave();}
+function assignSubsection(ssId,assignee){const ss=appData.sections.find(s=>s.id===ssId);if(ss){ss.assignee=assignee;renderSummary();scheduleSave();showToast(`${ss.label} assigned to ${assignee}`);}}
 function moveSubsection(ssId,targetGroupId){
   const ss=appData.sections.find(s=>s.id===ssId);if(!ss||!targetGroupId)return;
   ss.sectionGroupId=targetGroupId;
