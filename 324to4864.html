@@ -622,7 +622,7 @@ function getContextTitle(ctx){
 }
 
 // RENDER
-function setTab(tab){currentTab=tab;document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));document.querySelector('.tab-btn.'+tab).classList.add('active');collapseState.groups.clear();collapseState.subsections.clear();renderAll();}
+function setTab(tab){currentTab=tab;document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));document.querySelector('.tab-btn.'+tab).classList.add('active');renderAll();}
 function renderAll(){renderSections();renderSummary();}
 
 function renderSections(){
