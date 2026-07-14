@@ -341,7 +341,7 @@
 <div id="app-screen">
   <div class="toolbar">
     <span class="last-saved" id="last-saved">Last saved: never</span>
-    <span style="font-size:0.72rem;color:var(--muted);margin-left:8px;">v35</span>
+    <span style="font-size:0.72rem;color:var(--muted);margin-left:8px;">v36</span>
     <div class="toolbar-spacer"></div>
     <button class="btn-notes-attach" onclick="openGlobalNotes()">&#128221; Notes / Attachments</button>
     <button class="btn-secondary" onclick="window.open('https://drive.google.com/drive/folders/1CNq8fXmJBz2SoZUyPSE1VS9mkgMVLP8B','_blank')">&#128194; Drive Folder</button>
@@ -354,7 +354,7 @@
   <div id="search-bar" style="margin-bottom:16px;display:flex;gap:8px;align-items:center;">
     <div style="position:relative;flex:1;max-width:400px;">
       <span style="position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:0.9rem;pointer-events:none;">🔍</span>
-      <input type="text" id="search-input" placeholder="Search descriptions and notes…"
+      <input type="text" id="search-input" placeholder="Search descriptions, notes, amounts…"
         style="width:100%;padding:8px 10px 8px 32px;border:1.5px solid var(--border);border-radius:8px;font-size:0.85rem;font-family:inherit;outline:none;transition:border-color 0.2s;"
         oninput="handleSearch(this.value)"
         onfocus="this.style.borderColor='var(--navy)'"
@@ -1347,6 +1347,8 @@ function itemMatchesSearch(item,query){
   if(!query) return true;
   if((item.name||'').toLowerCase().includes(query)) return true;
   if((item.notes||[]).some(n=>(n.text||'').toLowerCase().includes(query)||(n.url||'').toLowerCase().includes(query))) return true;
+  if(item.actual&&fmt(item.actual).replace(/[$,]/g,'').includes(query.replace(/[$,]/g,''))) return true;
+  if(item.budget&&fmt(item.budget).replace(/[$,]/g,'').includes(query.replace(/[$,]/g,''))) return true;
   return false;
 }
 function applySearch(){
