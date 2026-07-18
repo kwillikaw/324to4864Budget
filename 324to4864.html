@@ -341,7 +341,7 @@
 <div id="app-screen">
   <div class="toolbar">
     <span class="last-saved" id="last-saved">Last saved: never</span>
-    <span style="font-size:0.72rem;color:var(--muted);margin-left:8px;">v37</span>
+    <span style="font-size:0.72rem;color:var(--muted);margin-left:8px;">v38</span>
     <div class="toolbar-spacer"></div>
     <button class="btn-notes-attach" onclick="openGlobalNotes()">&#128221; Notes / Attachments</button>
     <button class="btn-secondary" onclick="window.open('https://drive.google.com/drive/folders/1CNq8fXmJBz2SoZUyPSE1VS9mkgMVLP8B','_blank')">&#128194; Drive Folder</button>
@@ -351,14 +351,20 @@
   </div>
 
   <!-- SEARCH BAR -->
-  <div id="search-bar" style="margin-bottom:16px;display:flex;gap:8px;align-items:center;">
-    <div style="position:relative;flex:1;max-width:400px;">
+  <div id="search-bar" style="margin-bottom:16px;display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+    <div style="position:relative;flex:1;min-width:180px;max-width:400px;">
       <span style="position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:0.9rem;pointer-events:none;">🔍</span>
       <input type="text" id="search-input" placeholder="Search descriptions, notes, amounts, attachments…"
         style="width:100%;padding:8px 10px 8px 32px;border:1.5px solid var(--border);border-radius:8px;font-size:0.85rem;font-family:inherit;outline:none;transition:border-color 0.2s;"
         oninput="handleSearch(this.value)"
         onfocus="this.style.borderColor='var(--navy)'"
         onblur="this.style.borderColor='var(--border)'"/>
+    </div>
+    <!-- Reconcile filter -->
+    <div style="display:flex;border:1.5px solid var(--border);border-radius:8px;overflow:hidden;flex-shrink:0;">
+      <button id="rcf-all" onclick="setReconcileFilter('all')" style="padding:7px 10px;border:none;background:var(--navy);color:var(--white);font-size:0.78rem;font-weight:600;cursor:pointer;white-space:nowrap;">All</button>
+      <button id="rcf-yes" onclick="setReconcileFilter('yes')" style="padding:7px 10px;border:none;border-left:1px solid var(--border);background:var(--white);color:var(--muted);font-size:0.78rem;font-weight:600;cursor:pointer;white-space:nowrap;">✓ Reconciled</button>
+      <button id="rcf-no" onclick="setReconcileFilter('no')" style="padding:7px 10px;border:none;border-left:1px solid var(--border);background:var(--white);color:var(--muted);font-size:0.78rem;font-weight:600;cursor:pointer;white-space:nowrap;">✗ Unreconciled</button>
     </div>
     <button id="search-clear" onclick="clearSearch()" style="display:none;padding:7px 12px;border:1.5px solid var(--border);border-radius:8px;background:var(--white);color:var(--muted);font-size:0.82rem;font-weight:600;cursor:pointer;">✕ Clear</button>
     <span id="search-count" style="font-size:0.78rem;color:var(--muted);white-space:nowrap;"></span>
@@ -1324,17 +1330,33 @@ function updateContextBadges(){
 
 // ── SEARCH ──
 let currentSearch='';
+let reconcileFilter='all'; // 'all' | 'yes' | 'no'
+
+function setReconcileFilter(val){
+  reconcileFilter=val;
+  const btns={all:'rcf-all',yes:'rcf-yes',no:'rcf-no'};
+  Object.entries(btns).forEach(([k,id])=>{
+    const btn=document.getElementById(id);if(!btn)return;
+    btn.style.background=k===val?'var(--navy)':'var(--white)';
+    btn.style.color=k===val?'var(--white)':'var(--muted)';
+  });
+  const clearBtn=document.getElementById('search-clear');
+  if(clearBtn) clearBtn.style.display=(currentSearch||reconcileFilter!=='all')?'block':'none';
+  applySearch();
+}
+
 function handleSearch(query){
   currentSearch=query.trim().toLowerCase();
   const clearBtn=document.getElementById('search-clear');
+  if(clearBtn) clearBtn.style.display=(currentSearch||reconcileFilter!=='all')?'block':'none';
   const countEl=document.getElementById('search-count');
-  clearBtn.style.display=currentSearch?'block':'none';
-  if(!currentSearch){clearSearchHighlights();countEl.textContent='';return;}
+  if(!currentSearch&&reconcileFilter==='all'){clearSearchHighlights();if(countEl)countEl.textContent='';return;}
   applySearch();
 }
 function clearSearch(){
   document.getElementById('search-input').value='';
   currentSearch='';
+  setReconcileFilter('all');
   document.getElementById('search-clear').style.display='none';
   document.getElementById('search-count').textContent='';
   clearSearchHighlights();
@@ -1344,6 +1366,10 @@ function clearSearchHighlights(){
   document.querySelectorAll('.li-name[style]').forEach(el=>el.style.background='');
 }
 function itemMatchesSearch(item,query){
+  // Reconcile filter
+  if(reconcileFilter==='yes'&&!item.reconciled) return false;
+  if(reconcileFilter==='no'&&item.reconciled) return false;
+  // Text/amount filter — if no query, reconcile filter alone is enough
   if(!query) return true;
   if((item.name||'').toLowerCase().includes(query)) return true;
   if((item.notes||[]).some(n=>(n.text||'').toLowerCase().includes(query)||(n.url||'').toLowerCase().includes(query))) return true;
@@ -1353,7 +1379,7 @@ function itemMatchesSearch(item,query){
   return false;
 }
 function applySearch(){
-  if(!currentSearch){clearSearchHighlights();return;}
+  if(!currentSearch&&reconcileFilter==='all'){clearSearchHighlights();return;}
   clearSearchHighlights();
   let totalMatches=0;
   appData.sections.filter(s=>s.project===currentTab).forEach(ss=>{
@@ -1366,7 +1392,7 @@ function applySearch(){
       if(matches){
         ssHasMatch=true;totalMatches++;
         const nameEl=row.querySelector('.li-name');
-        if(nameEl)(item.name||'').toLowerCase().includes(currentSearch)?nameEl.style.background='#fff3b0':nameEl.style.background='';
+        if(nameEl)currentSearch&&(item.name||'').toLowerCase().includes(currentSearch)?nameEl.style.background='#fff3b0':nameEl.style.background='';
       }
     });
     if(!ssHasMatch) ssHasMatch=(ss.notes||[]).some(n=>(n.text||'').toLowerCase().includes(currentSearch));
@@ -1379,7 +1405,8 @@ function applySearch(){
     groupEl.classList.toggle('search-hidden',vis.length===0);
     if(vis.length>0&&groupEl.classList.contains('collapsed')){groupEl.classList.remove('collapsed');const chev=document.getElementById('sgc-'+group.id);if(chev)chev.classList.add('open');}
   });
-  document.getElementById('search-count').textContent=totalMatches===0?'No matches':`${totalMatches} match${totalMatches===1?'':'es'}`;
+  const countEl=document.getElementById('search-count');
+  if(countEl) countEl.textContent=totalMatches===0?'No matches':`${totalMatches} match${totalMatches===1?'':'es'}`;
 }
 
 // INIT
