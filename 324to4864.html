@@ -347,7 +347,7 @@
 <div id="app-screen">
   <div class="toolbar">
     <span class="last-saved" id="last-saved">Last saved: never</span>
-    <span style="font-size:0.72rem;color:var(--muted);margin-left:8px;">v39 · Jul 2026</span>
+    <span style="font-size:0.72rem;color:var(--muted);margin-left:8px;">v40 · Jul 2026</span>
     <div class="toolbar-spacer"></div>
     <button class="btn-notes-attach" onclick="openGlobalNotes()">&#128221; Notes / Attachments</button>
     <button class="btn-secondary" onclick="window.open('https://drive.google.com/drive/folders/1CNq8fXmJBz2SoZUyPSE1VS9mkgMVLP8B','_blank')">&#128194; Drive Folder</button>
@@ -726,16 +726,41 @@ function getContextTitle(ctx){
 }
 
 // RENDER
-function setTab(tab){currentTab=tab;document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));document.querySelector('.tab-btn.'+tab).classList.add('active');clearSearch();renderAll();}
-function renderAll(){renderSections();renderSummary();if(currentSearch)applySearch();}
+function setTab(tab){
+  currentTab=tab;
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.querySelector('.tab-btn.'+tab).classList.add('active');
+  // Show/hide tab content without re-rendering
+  document.querySelectorAll('.tab-content-il,.tab-content-fl').forEach(el=>el.style.display='none');
+  const activeEl=document.querySelector('.tab-content-'+tab);
+  if(activeEl) activeEl.style.display='';
+  const addArea=document.getElementById('add-section-area');
+  if(addArea) addArea.innerHTML=`<div class="add-bar" style="margin-top:8px;">
+    <span class="add-bar-label">+ New Section:</span>
+    <input type="text" id="new-group-name" placeholder="Section name (e.g. 1st Floor)"/>
+    <button class="btn-add-sec" onclick="addGroup()">Add Section</button>
+  </div>`;
+  if(currentSearch||reconcileFilter!=='all') applySearch();
+}
+
+function renderAll(){renderSections();renderSummary();if(currentSearch||reconcileFilter!=='all')applySearch();}
 
 function renderSections(){
   const container=document.getElementById('sections-container');
   const addArea=document.getElementById('add-section-area');
   container.innerHTML='';
-  appData.sectionGroups.filter(g=>g.project===currentTab).forEach(group=>{
-    container.appendChild(renderGroup(group));
+
+  // Render BOTH tabs into separate divs so DOM always has all elements
+  ['il','fl'].forEach(proj=>{
+    const wrapper=document.createElement('div');
+    wrapper.className='tab-content-'+proj;
+    wrapper.style.display=proj===currentTab?'':'none';
+    appData.sectionGroups.filter(g=>g.project===proj).forEach(group=>{
+      wrapper.appendChild(renderGroup(group,proj));
+    });
+    container.appendChild(wrapper);
   });
+
   addArea.innerHTML=`<div class="add-bar" style="margin-top:8px;">
     <span class="add-bar-label">+ New Section:</span>
     <input type="text" id="new-group-name" placeholder="Section name (e.g. 1st Floor)"/>
@@ -744,10 +769,11 @@ function renderSections(){
   applyCollapseState();
 }
 
-function renderGroup(group){
+function renderGroup(group,proj){
+  proj=proj||group.project;
   const el=document.createElement('div');
   el.className='section-group';el.dataset.groupId=group.id;
-  const subsections=appData.sections.filter(s=>s.sectionGroupId===group.id&&s.project===currentTab);
+  const subsections=appData.sections.filter(s=>s.sectionGroupId===group.id&&s.project===proj);
   const gt=groupTotals(group.id);
   const dCls=gt.actualNet<0?'negative':'positive';
   const noteCount=(group.notes||[]).length,attachCount=(group.attachments||[]).length;
@@ -1424,6 +1450,11 @@ function clearSearch(){
   document.getElementById('search-clear').style.display='none';
   document.getElementById('search-count').textContent='';
   clearSearchHighlights();
+  // Restore tab visibility
+  ['il','fl'].forEach(proj=>{
+    const wrapper=document.querySelector('.tab-content-'+proj);
+    if(wrapper) wrapper.style.display=proj===currentTab?'':'none';
+  });
 }
 function clearSearchHighlights(){
   document.querySelectorAll('.search-hidden').forEach(el=>el.classList.remove('search-hidden'));
@@ -1447,7 +1478,7 @@ function applySearch(){
   clearSearchHighlights();
   let totalMatches=0;
 
-  // Search across ALL sections regardless of current tab
+  // Search ALL sections - both tabs are now always in the DOM
   appData.sections.forEach(ss=>{
     const ssCard=document.querySelector(`[data-subsection-id="${ss.id}"]`);if(!ssCard)return;
     let ssHasMatch=false;
@@ -1471,8 +1502,21 @@ function applySearch(){
     groupEl.classList.toggle('search-hidden',vis.length===0);
     if(vis.length>0&&groupEl.classList.contains('collapsed')){groupEl.classList.remove('collapsed');const chev=document.getElementById('sgc-'+group.id);if(chev)chev.classList.add('open');}
   });
+
+  // If there are matches in the inactive tab, show that tab's wrapper too
+  ['il','fl'].forEach(proj=>{
+    const wrapper=document.querySelector('.tab-content-'+proj);if(!wrapper)return;
+    const hasVisible=wrapper.querySelectorAll('.section-group:not(.search-hidden)').length>0;
+    if(currentSearch||reconcileFilter!=='all'){
+      wrapper.style.display=hasVisible?'':'none';
+      // If showing inactive tab results, update tab button to reflect
+    } else {
+      wrapper.style.display=proj===currentTab?'':'none';
+    }
+  });
+
   const countEl=document.getElementById('search-count');
-  if(countEl) countEl.textContent=totalMatches===0?'No matches':`${totalMatches} match${totalMatches===1?'':'es'} (all tabs)`;
+  if(countEl) countEl.textContent=totalMatches===0?'No matches':`${totalMatches} match${totalMatches===1?'':'es'} (IL+FL)`;
 }
 
 // INIT
