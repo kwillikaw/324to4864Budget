@@ -144,13 +144,13 @@
   .badge-count{position:absolute;top:-5px;right:-5px;background:var(--navy);color:var(--white);border-radius:50%;width:14px;height:14px;font-size:0.55rem;display:flex;align-items:center;justify-content:center;font-weight:700;line-height:1;pointer-events:none;}
 
   /* COLUMN HEADERS */
-  .col-header-row{display:grid;grid-template-columns:1fr 100px 26px 100px 26px 90px 30px 30px 26px 28px;gap:3px;padding:5px 14px 4px;background:#f0ede8;border-bottom:1px solid var(--border);font-size:0.67rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:var(--muted);}
+  .col-header-row{display:grid;grid-template-columns:1fr 110px 100px 26px 100px 26px 90px 30px 30px 26px 28px;gap:3px;padding:5px 14px 4px;background:#f0ede8;border-bottom:1px solid var(--border);font-size:0.67rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:var(--muted);}
   .col-header-row div{display:flex;align-items:center;}
   .col-header-row .ch-r{justify-content:flex-end;}
 
   /* LINE ITEMS */
   .line-items{padding:2px 0;}
-  .line-item{display:grid;grid-template-columns:1fr 100px 26px 100px 26px 90px 30px 30px 26px 28px;gap:3px;align-items:center;padding:7px 14px;border-bottom:1px solid var(--cream);transition:background 0.12s;}
+  .line-item{display:grid;grid-template-columns:1fr 110px 100px 26px 100px 26px 90px 30px 30px 26px 28px;gap:3px;align-items:center;padding:7px 14px;border-bottom:1px solid var(--cream);transition:background 0.12s;}
   .line-item:last-child{border-bottom:none;}
   .line-item:hover{background:var(--cream);}
   .line-item-fields-row{display:contents;}
@@ -164,6 +164,12 @@
   .li-diff.positive{color:var(--green);}
   .li-diff.negative{color:var(--red);}
   .li-diff.neutral{color:var(--muted);}
+  .li-vendor{font-size:0.8rem;border:none;background:transparent;outline:none;font-family:inherit;cursor:text;width:100%;color:var(--muted);position:relative;}
+  .li-vendor:focus{background:#efefeb;border-radius:4px;padding:2px 5px;color:var(--text);}
+  .vendor-dropdown{position:absolute;z-index:300;background:var(--white);border:1.5px solid var(--border);border-radius:8px;box-shadow:var(--shadow);max-height:180px;overflow-y:auto;min-width:160px;top:100%;left:0;}
+  .vendor-option{padding:7px 12px;font-size:0.83rem;cursor:pointer;color:var(--text);}
+  .vendor-option:hover{background:var(--cream);}
+  .vendor-option.add-new{color:var(--il-accent);font-style:italic;border-top:1px solid var(--border);}
   .hist-btn{width:22px;height:22px;border-radius:5px;border:1px solid var(--border);background:var(--white);cursor:pointer;font-size:0.68rem;color:var(--muted);display:flex;align-items:center;justify-content:center;transition:all 0.15s;justify-self:center;}
   .hist-btn:hover{border-color:var(--navy);color:var(--navy);background:var(--cream);}
   .hist-btn.has-history{border-color:var(--gold);color:#9a7020;background:#fef9ec;}
@@ -191,7 +197,7 @@
   .btn-add:hover{background:var(--slate);}
 
   /* SUBTOTALS */
-  .section-subtotals{display:grid;grid-template-columns:1fr 100px 26px 100px 26px 90px 30px 30px 26px 28px;gap:3px;padding:7px 14px;background:#f0ede8;border-top:1px solid var(--border);font-size:0.78rem;font-weight:700;}
+  .section-subtotals{display:grid;grid-template-columns:1fr 110px 100px 26px 100px 26px 90px 30px 30px 26px 28px;gap:3px;padding:7px 14px;background:#f0ede8;border-top:1px solid var(--border);font-size:0.78rem;font-weight:700;}
   .st-label{color:var(--muted);font-size:0.7rem;text-transform:uppercase;letter-spacing:0.05em;display:flex;align-items:center;}
   .st-val{text-align:right;}
   .st-val.income-color{color:var(--green);}
@@ -288,7 +294,7 @@
   @media(max-width:750px){
     .summary-row{grid-template-columns:1fr 1fr;}
     .summary-row .summary-card:last-child{grid-column:span 2;}
-    .col-header-row,.line-item,.section-subtotals{grid-template-columns:1fr 80px 26px 80px 26px 70px 26px 26px 22px 24px;}
+    .col-header-row,.line-item,.section-subtotals{grid-template-columns:1fr 90px 80px 26px 80px 26px 70px 26px 26px 22px 24px;}
     .add-row{grid-template-columns:1fr 80px 80px auto;}
     .section-group-totals{display:none;}
   }
@@ -341,7 +347,7 @@
 <div id="app-screen">
   <div class="toolbar">
     <span class="last-saved" id="last-saved">Last saved: never</span>
-    <span style="font-size:0.72rem;color:var(--muted);margin-left:8px;">v38</span>
+    <span style="font-size:0.72rem;color:var(--muted);margin-left:8px;">v39 · Jul 2026</span>
     <div class="toolbar-spacer"></div>
     <button class="btn-notes-attach" onclick="openGlobalNotes()">&#128221; Notes / Attachments</button>
     <button class="btn-secondary" onclick="window.open('https://drive.google.com/drive/folders/1CNq8fXmJBz2SoZUyPSE1VS9mkgMVLP8B','_blank')">&#128194; Drive Folder</button>
@@ -827,7 +833,7 @@ function renderSubsectionHTML(ss){
     </div>
     <div class="subsection-body">
       <div class="col-header-row">
-        <div>Description</div><div class="ch-r">Budget</div><div></div>
+        <div>Description</div><div>Vendor</div><div class="ch-r">Budget</div><div></div>
         <div class="ch-r">Actual</div><div></div><div class="ch-r">Diff</div>
         <div></div><div></div><div></div><div title="Reconciled in Monarch">✓M</div>
       </div>
@@ -850,10 +856,19 @@ function renderItemHTML(item,ss){
   const hasBH=(item.budgetHistory||[]).length>0,hasAH=(item.actualHistory||[]).length>0;
   const noteCount=(item.notes||[]).length,attachCount=(item.attachments||[]).length;
   const isReconciled=!!item.reconciled;
-  const showCb=!!item.actual; // only show checkbox if actual has a value
+  const showCb=!!item.actual;
   return `<div class="line-item${isReconciled?' reconciled':''}" data-item-id="${item.id}" data-section-id="${ss.id}">
     <input class="li-name" type="text" value="${escHtml(item.name)}" placeholder="Description"
       onchange="updateItemName('${ss.id}','${item.id}',this.value)" oninput="scheduleSave()"/>
+    <div style="position:relative;">
+      <input class="li-vendor" type="text" value="${escHtml(item.vendor||'')}" placeholder="Vendor"
+        autocomplete="off"
+        oninput="showVendorDropdown(this,'${ss.id}','${item.id}')"
+        onchange="updateItemVendor('${ss.id}','${item.id}',this.value)"
+        onblur="hideVendorDropdown('${item.id}')"
+        onkeydown="vendorKeydown(event,this,'${ss.id}','${item.id}')"/>
+      <div class="vendor-dropdown" id="vdd-${item.id}" style="display:none;"></div>
+    </div>
     <div class="line-item-fields-row">
       <input class="li-budget ${valCls}" type="text" value="${item.budget?fmt(item.budget):''}" placeholder="$0"
         onfocus="this.dataset.prev=this.value;this.select();"
@@ -878,7 +893,7 @@ function subtotalsHTML(ss){
   const{budgetTotal,actualTotal}=subsectionTotals(ss);
   const valCls=ss.type==='income'?'income-color':'expense-color';
   const dText=diffText(ss.type,budgetTotal,actualTotal),dCls=diffCls(ss.type,budgetTotal,actualTotal);
-  return `<div class="st-label">Total</div>
+  return `<div class="st-label">Total</div><div></div>
     <div class="st-val ${valCls}">${fmt(budgetTotal)}</div><div></div>
     <div class="st-val ${valCls}">${actualTotal?fmt(actualTotal):'—'}</div><div></div>
     <div class="st-val ${dCls}">${dText}</div>
@@ -1105,6 +1120,54 @@ function updateSubsectionTotals(ssId){
   if(grpEl){const gt=groupTotals(ss.sectionGroupId);const sgtVals=grpEl.querySelectorAll('.sgt-val');if(sgtVals.length>=2){sgtVals[0].textContent=fmt(gt.budgetNet);sgtVals[1].textContent=fmt(gt.actualNet);sgtVals[1].className='sgt-val '+(gt.actualNet<0?'negative':'positive');}}
 }
 function updateItemName(ssId,itemId,value){const ss=appData.sections.find(s=>s.id===ssId);if(!ss)return;const item=ss.items.find(i=>i.id===itemId);if(item)item.name=value;scheduleSave();}
+function updateItemVendor(ssId,itemId,value){const ss=appData.sections.find(s=>s.id===ssId);if(!ss)return;const item=ss.items.find(i=>i.id===itemId);if(item){item.vendor=value.trim();scheduleSave();}}
+
+// Collect all unique vendor names across ALL sections/projects
+function getAllVendors(){
+  const set=new Set();
+  appData.sections.forEach(s=>s.items.forEach(i=>{if(i.vendor&&i.vendor.trim())set.add(i.vendor.trim());}));
+  return [...set].sort((a,b)=>a.toLowerCase().localeCompare(b.toLowerCase()));
+}
+
+let vendorHideTimer={};
+function showVendorDropdown(inputEl,ssId,itemId){
+  const query=inputEl.value.trim().toLowerCase();
+  const dd=document.getElementById('vdd-'+itemId);
+  if(!dd)return;
+  const all=getAllVendors();
+  const matches=query?all.filter(v=>v.toLowerCase().includes(query)):all;
+  const exactMatch=all.some(v=>v.toLowerCase()===query);
+  if(matches.length===0&&(!query||exactMatch)){dd.style.display='none';return;}
+  let html=matches.map(v=>`<div class="vendor-option" onmousedown="selectVendor('${ssId}','${itemId}','${escHtml(v)}')">${escHtml(v)}</div>`).join('');
+  if(query&&!exactMatch) html+=`<div class="vendor-option add-new" onmousedown="selectVendor('${ssId}','${itemId}','${escHtml(inputEl.value.trim())}')">+ Add "${escHtml(inputEl.value.trim())}"</div>`;
+  dd.innerHTML=html;
+  dd.style.display='block';
+}
+function hideVendorDropdown(itemId){
+  vendorHideTimer[itemId]=setTimeout(()=>{
+    const dd=document.getElementById('vdd-'+itemId);
+    if(dd)dd.style.display='none';
+  },200);
+}
+function selectVendor(ssId,itemId,value){
+  clearTimeout(vendorHideTimer[itemId]);
+  const ss=appData.sections.find(s=>s.id===ssId);if(!ss)return;
+  const item=ss.items.find(i=>i.id===itemId);if(!item)return;
+  item.vendor=value;
+  // Update input
+  const row=document.querySelector(`.line-item[data-item-id="${itemId}"]`);
+  if(row){const inp=row.querySelector('.li-vendor');if(inp)inp.value=value;}
+  const dd=document.getElementById('vdd-'+itemId);if(dd)dd.style.display='none';
+  scheduleSave();
+}
+function vendorKeydown(event,inputEl,ssId,itemId){
+  if(event.key==='Escape'){const dd=document.getElementById('vdd-'+itemId);if(dd)dd.style.display='none';}
+  if(event.key==='Enter'){
+    event.preventDefault();
+    updateItemVendor(ssId,itemId,inputEl.value);
+    const dd=document.getElementById('vdd-'+itemId);if(dd)dd.style.display='none';
+  }
+}
 function toggleReconcile(ssId,itemId,checked){
   const ss=appData.sections.find(s=>s.id===ssId);if(!ss)return;
   const item=ss.items.find(i=>i.id===itemId);if(!item)return;
@@ -1141,7 +1204,8 @@ function collectFromDOM(){
     const ss=appData.sections.find(s=>s.id===row.dataset.sectionId);if(!ss)return;
     const item=ss.items.find(i=>i.id===row.dataset.itemId);if(!item)return;
     const ne=row.querySelector('.li-name'),be=row.querySelector('.li-budget'),ae=row.querySelector('.li-actual');
-    if(ne)item.name=ne.value;if(be)item.budget=parseAmt(be.value);if(ae)item.actual=parseAmt(ae.value);
+    const ve=row.querySelector('.li-vendor');
+    if(ne)item.name=ne.value;if(ve)item.vendor=ve.value;if(be)item.budget=parseAmt(be.value);if(ae)item.actual=parseAmt(ae.value);
   });
   document.querySelectorAll('.subsection-title').forEach(inp=>{
     const card=inp.closest('[data-subsection-id]');if(!card)return;
@@ -1369,9 +1433,9 @@ function itemMatchesSearch(item,query){
   // Reconcile filter
   if(reconcileFilter==='yes'&&!item.reconciled) return false;
   if(reconcileFilter==='no'&&item.reconciled) return false;
-  // Text/amount filter — if no query, reconcile filter alone is enough
   if(!query) return true;
   if((item.name||'').toLowerCase().includes(query)) return true;
+  if((item.vendor||'').toLowerCase().includes(query)) return true;
   if((item.notes||[]).some(n=>(n.text||'').toLowerCase().includes(query)||(n.url||'').toLowerCase().includes(query))) return true;
   if(item.actual&&fmt(item.actual).replace(/[$,]/g,'').includes(query.replace(/[$,]/g,''))) return true;
   if(item.budget&&fmt(item.budget).replace(/[$,]/g,'').includes(query.replace(/[$,]/g,''))) return true;
@@ -1382,7 +1446,9 @@ function applySearch(){
   if(!currentSearch&&reconcileFilter==='all'){clearSearchHighlights();return;}
   clearSearchHighlights();
   let totalMatches=0;
-  appData.sections.filter(s=>s.project===currentTab).forEach(ss=>{
+
+  // Search across ALL sections regardless of current tab
+  appData.sections.forEach(ss=>{
     const ssCard=document.querySelector(`[data-subsection-id="${ss.id}"]`);if(!ssCard)return;
     let ssHasMatch=false;
     ss.items.forEach(item=>{
@@ -1399,14 +1465,14 @@ function applySearch(){
     ssCard.classList.toggle('search-hidden',!ssHasMatch);
     if(ssHasMatch&&ssCard.classList.contains('collapsed')){ssCard.classList.remove('collapsed');const chev=document.getElementById('ssc-'+ss.id);if(chev)chev.classList.add('open');}
   });
-  appData.sectionGroups.filter(g=>g.project===currentTab).forEach(group=>{
+  appData.sectionGroups.forEach(group=>{
     const groupEl=document.querySelector(`[data-group-id="${group.id}"]`);if(!groupEl)return;
     const vis=groupEl.querySelectorAll('.subsection-card:not(.search-hidden)');
     groupEl.classList.toggle('search-hidden',vis.length===0);
     if(vis.length>0&&groupEl.classList.contains('collapsed')){groupEl.classList.remove('collapsed');const chev=document.getElementById('sgc-'+group.id);if(chev)chev.classList.add('open');}
   });
   const countEl=document.getElementById('search-count');
-  if(countEl) countEl.textContent=totalMatches===0?'No matches':`${totalMatches} match${totalMatches===1?'':'es'}`;
+  if(countEl) countEl.textContent=totalMatches===0?'No matches':`${totalMatches} match${totalMatches===1?'':'es'} (all tabs)`;
 }
 
 // INIT
