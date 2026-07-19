@@ -347,7 +347,7 @@
 <div id="app-screen">
   <div class="toolbar">
     <span class="last-saved" id="last-saved">Last saved: never</span>
-    <span style="font-size:0.72rem;color:var(--muted);margin-left:8px;">v41 · Jul 2026</span>
+    <span style="font-size:0.72rem;color:var(--muted);margin-left:8px;">v42 · Jul 2026</span>
     <div class="toolbar-spacer"></div>
     <button class="btn-notes-attach" onclick="openGlobalNotes()">&#128221; Notes / Attachments</button>
     <button class="btn-secondary" onclick="window.open('https://drive.google.com/drive/folders/1CNq8fXmJBz2SoZUyPSE1VS9mkgMVLP8B','_blank')">&#128194; Drive Folder</button>
@@ -1450,6 +1450,11 @@ function clearSearch(){
   document.getElementById('search-clear').style.display='none';
   document.getElementById('search-count').textContent='';
   clearSearchHighlights();
+  // Restore tab button active state
+  document.querySelectorAll('.tab-btn').forEach(b=>{ b.style.background=''; b.style.color=''; b.style.borderColor=''; });
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  const activeTabBtn=document.querySelector('.tab-btn.'+currentTab);
+  if(activeTabBtn) activeTabBtn.classList.add('active');
   // Restore tab visibility and remove labels
   ['il','fl'].forEach(proj=>{
     const wrapper=document.querySelector('.tab-content-'+proj);
@@ -1520,8 +1525,8 @@ function applySearch(){
         // Add a subtle label at the top of each tab's results
         const label=document.createElement('div');
         label.className='tab-search-label';
-        label.style.cssText=`padding:6px 12px;margin-bottom:8px;border-radius:8px;font-size:0.75rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:var(--white);background:${proj==='il'?'var(--il-accent)':'var(--fl-accent)'};`;
-        label.textContent=proj==='il'?'🏡 IL (324) — Sale':'🌴 FL (4864) — Remodel';
+        label.style.cssText=`padding:6px 14px;margin-bottom:8px;border-radius:8px;font-size:0.82rem;font-weight:700;letter-spacing:0.04em;color:${proj==='il'?'var(--il-accent)':'var(--fl-accent)'};background:var(--white);border:2px solid ${proj==='il'?'var(--il-accent)':'var(--fl-accent)'};display:inline-block;`;
+        label.textContent=proj==='il'?'IL (324)':'FL (4864)';
         wrapper.insertBefore(label,wrapper.firstChild);
       }
     } else {
@@ -1529,6 +1534,11 @@ function applySearch(){
     }
   });
 
+  // Deselect both tab buttons to indicate we're showing all tabs
+  const bothShown=['il','fl'].every(p=>{const w=document.querySelector('.tab-content-'+p);return w&&w.style.display!=='none';});
+  if(bothShown){
+    document.querySelectorAll('.tab-btn').forEach(b=>{b.classList.remove('active');b.style.background='var(--white)';b.style.color='var(--text)';b.style.borderColor='var(--border)';});
+  }
   const countEl=document.getElementById('search-count');
   if(countEl) countEl.textContent=totalMatches===0?'No matches':`${totalMatches} match${totalMatches===1?'':'es'} (IL+FL)`;
 }
