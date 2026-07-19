@@ -347,7 +347,7 @@
 <div id="app-screen">
   <div class="toolbar">
     <span class="last-saved" id="last-saved">Last saved: never</span>
-    <span style="font-size:0.72rem;color:var(--muted);margin-left:8px;">v40 · Jul 2026</span>
+    <span style="font-size:0.72rem;color:var(--muted);margin-left:8px;">v41 · Jul 2026</span>
     <div class="toolbar-spacer"></div>
     <button class="btn-notes-attach" onclick="openGlobalNotes()">&#128221; Notes / Attachments</button>
     <button class="btn-secondary" onclick="window.open('https://drive.google.com/drive/folders/1CNq8fXmJBz2SoZUyPSE1VS9mkgMVLP8B','_blank')">&#128194; Drive Folder</button>
@@ -1450,10 +1450,14 @@ function clearSearch(){
   document.getElementById('search-clear').style.display='none';
   document.getElementById('search-count').textContent='';
   clearSearchHighlights();
-  // Restore tab visibility
+  // Restore tab visibility and remove labels
   ['il','fl'].forEach(proj=>{
     const wrapper=document.querySelector('.tab-content-'+proj);
-    if(wrapper) wrapper.style.display=proj===currentTab?'':'none';
+    if(wrapper){
+      wrapper.style.display=proj===currentTab?'':'none';
+      const label=wrapper.querySelector('.tab-search-label');
+      if(label) label.remove();
+    }
   });
 }
 function clearSearchHighlights(){
@@ -1507,9 +1511,19 @@ function applySearch(){
   ['il','fl'].forEach(proj=>{
     const wrapper=document.querySelector('.tab-content-'+proj);if(!wrapper)return;
     const hasVisible=wrapper.querySelectorAll('.section-group:not(.search-hidden)').length>0;
+    // Remove existing label if any
+    const existingLabel=wrapper.querySelector('.tab-search-label');
+    if(existingLabel) existingLabel.remove();
     if(currentSearch||reconcileFilter!=='all'){
       wrapper.style.display=hasVisible?'':'none';
-      // If showing inactive tab results, update tab button to reflect
+      if(hasVisible){
+        // Add a subtle label at the top of each tab's results
+        const label=document.createElement('div');
+        label.className='tab-search-label';
+        label.style.cssText=`padding:6px 12px;margin-bottom:8px;border-radius:8px;font-size:0.75rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:var(--white);background:${proj==='il'?'var(--il-accent)':'var(--fl-accent)'};`;
+        label.textContent=proj==='il'?'🏡 IL (324) — Sale':'🌴 FL (4864) — Remodel';
+        wrapper.insertBefore(label,wrapper.firstChild);
+      }
     } else {
       wrapper.style.display=proj===currentTab?'':'none';
     }
