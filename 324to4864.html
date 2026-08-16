@@ -347,7 +347,7 @@
 <div id="app-screen">
   <div class="toolbar">
     <span class="last-saved" id="last-saved">Last saved: never</span>
-    <span style="font-size:0.72rem;color:var(--muted);margin-left:8px;">v43 · Jul 2026</span>
+    <span style="font-size:0.72rem;color:var(--muted);margin-left:8px;">v44 · Aug 2026</span>
     <div class="toolbar-spacer"></div>
     <button class="btn-notes-attach" onclick="openGlobalNotes()">&#128221; Notes / Attachments</button>
     <button class="btn-secondary" onclick="window.open('https://drive.google.com/drive/folders/1CNq8fXmJBz2SoZUyPSE1VS9mkgMVLP8B','_blank')">&#128194; Drive Folder</button>
@@ -1109,6 +1109,26 @@ function moveSubsectionOrder(ssId,dir){
 }
 
 // LINE ITEMS
+function syncReconcileCheckbox(row,item,ssId,itemId){
+  if(!row)return;
+  const fieldsRow=row.querySelector('.line-item-fields-row');if(!fieldsRow)return;
+  const showCb=!!item.actual;
+  const cbEl=fieldsRow.querySelector('.reconcile-cb');
+  if(showCb&&!cbEl){
+    const placeholder=fieldsRow.lastElementChild;
+    if(placeholder&&placeholder.tagName==='DIV'){
+      const newCb=document.createElement('input');
+      newCb.type='checkbox';newCb.className='reconcile-cb';newCb.title='Reconciled in Monarch Money';
+      newCb.checked=!!item.reconciled;
+      newCb.onchange=function(){toggleReconcile(ssId,itemId,this.checked)};
+      fieldsRow.replaceChild(newCb,placeholder);
+    }
+  }else if(!showCb&&cbEl){
+    const placeholder=document.createElement('div');
+    fieldsRow.replaceChild(placeholder,cbEl);
+    if(item.reconciled){item.reconciled=false;row.classList.remove('reconciled');}
+  }
+}
 function onAmountBlur(inputEl,ssId,itemId,field){
   const ss=appData.sections.find(s=>s.id===ssId);if(!ss)return;
   const item=ss.items.find(i=>i.id===itemId);if(!item)return;
@@ -1124,6 +1144,7 @@ function onAmountBlur(inputEl,ssId,itemId,field){
   }
   const row=inputEl.closest('.line-item');
   if(row){const diffEl=row.querySelector('.li-diff');if(diffEl){const tmp=document.createElement('div');tmp.innerHTML=diffHTML(ss.type,item.budget,item.actual);const n=tmp.firstChild;diffEl.className=n.className;diffEl.textContent=n.textContent;}}
+  if(field==='actual')syncReconcileCheckbox(row,item,ssId,itemId);
   const subtEl=document.getElementById('subtotals-'+ssId);if(subtEl)subtEl.innerHTML=subtotalsHTML(ss);
 }
 function liveCalc(ssId,itemId,inputEl,field){
@@ -1132,6 +1153,7 @@ function liveCalc(ssId,itemId,inputEl,field){
   item[field]=parseAmt(inputEl.value);
   const row=inputEl.closest('.line-item');
   if(row){const diffEl=row.querySelector('.li-diff');if(diffEl){const tmp=document.createElement('div');tmp.innerHTML=diffHTML(ss.type,item.budget,item.actual);const n=tmp.firstChild;diffEl.className=n.className;diffEl.textContent=n.textContent;}}
+  if(field==='actual')syncReconcileCheckbox(row,item,ssId,itemId);
   const subtEl=document.getElementById('subtotals-'+ssId);if(subtEl)subtEl.innerHTML=subtotalsHTML(ss);
   updateSubsectionTotals(ssId);renderSummary();
 }
